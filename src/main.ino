@@ -9,12 +9,12 @@ int imagem1[][3] = {
 };
 
 
-int largura = 29;
+int largura = 108;
 int LED_COUNT = 36;
 int LED_PIN = 15, sensor = 36;
 int detect = 0;
 
-int numSetores = 8*largura, estado = 1, j = 0;
+int numSetores = largura, estado = 1, j = 0;
 unsigned long int tempoSensor = 0, tempo = 0, t_giro = 0, t_arco = 0;
 
 int imagemIndex = 0;
@@ -79,14 +79,9 @@ void loop() {
   if (micros() >= (tempo + t_arco)) {
     for (int i = 0; i < LED_COUNT; i++) 
     {
-      strip.setPixelColor(i, strip.Color(0, 0, 0));
-      if (i < 17) {
-        strip.setPixelColor(i, strip.Color(255, 255, 255));
-      } 
       
-      if (i > 19) {
-        strip.setPixelColor(i, strip.Color(255, 0, 0));
-      }
+      strip.setPixelColor(i, strip.Color(0, 0, 0));
+      
     }
     j += 1;
     tempo = micros();
