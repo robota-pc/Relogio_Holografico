@@ -79,9 +79,13 @@ void loop() {
   if (micros() >= (tempo + t_arco)) {
     for (int i = 0; i < LED_COUNT; i++) 
     {
-      
-      strip.setPixelColor(i, strip.Color(0, 0, 0));
-      
+      estado = j + (i - 7) * largura;
+
+      red = imagem1[estado][0];
+      green = imagem1[estado][1];
+      blue = imagem1[estado][2];
+
+      strip.setPixelColor(LED_COUNT - i + 3, strip.Color(red, green, blue));
     }
     j += 1;
     tempo = micros();
