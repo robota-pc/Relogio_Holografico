@@ -79,56 +79,14 @@ void loop() {
   if (micros() >= (tempo + t_arco)) {
     for (int i = 0; i < LED_COUNT; i++) 
     {
-      if (i < 7) {
-        strip.setPixelColor(i, strip.Color(255, 25, 0));
-      } else 
-      {
-        estado = j + (i - 7) * largura;
-
-        red = imagem1[estado][0];
-        green = imagem1[estado][1];
-        blue = imagem1[estado][2];
-
-        /*
-        if(green < 150){
-          green = 0;
-        }else {
-          green = 250;
-        }
-        if(red < 125){
-          red = 0;
-        }else {
-          red = 250;
-        }
-        if(blue <= 125){
-          blue = 0;
-        }else {
-          blue = 250;
-        }
-        
-        blue =50;
-        green = 100;
-        */
-        if (blue && red && green == 255) {
-          blue = 0;
-          red = 0;
-          green = 0;
-        } //else {
-          //red = 255;
-         // green = 25;
-          //blue = 0;
-        //}
-
-
-
-        strip.setPixelColor(LED_COUNT - i + 3, strip.Color(red, green, blue));
+      strip.setPixelColor(i, strip.Color(0, 0, 0));
+      if (i < 17) {
+        strip.setPixelColor(i, strip.Color(255, 255, 255));
+      } 
       }
-      if (i > 26) {
-        strip.setPixelColor(i, strip.Color(75, 0, 130));
+      if (i > 19) {
+        strip.setPixelColor(i, strip.Color(255, 0, 0));
       }
-    }
-    for (int i = 0; i < 3; i++) {
-      strip.setPixelColor(i, strip.Color(255, 25, 0));
     }
     j += 1;
     tempo = micros();
