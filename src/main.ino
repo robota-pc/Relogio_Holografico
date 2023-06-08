@@ -83,7 +83,7 @@ void loop() {
       if (i < 17) {
         strip.setPixelColor(i, strip.Color(255, 255, 255));
       } 
-      }
+      
       if (i > 19) {
         strip.setPixelColor(i, strip.Color(255, 0, 0));
       }
