@@ -1,20 +1,20 @@
 #include <WiFi.h>
 #include <WebServer.h>
+#include <Adafruit_NeoPixel.h>
+#include <Arduino.h>
 
 const char *ssid = "relogio";
 const char *password = "holografico";
 
 WebServer server(80);
 
-int numeros[5] = {123, 456, 789, 101, 112}; // Array com os 5 números
-
 int largura = 29;
 int LED_COUNT = 36;
 int LED_PIN = 15, sensor = 36;
 int detect = 0;
 
-int numSetores = 8*largura, estado = 1, j = 0;
-unsigned long int tempoSensor = 0, tempo = 0, t_giro = 0, t_arco = 0;
+int numSetores = 3*largura, estado = 1, j = 0, Ngiro = 0, Mgiro = 0;
+unsigned long int tempoSensor = 0, tempo = 0, t_giro[5] = {0,0,0,0,0}, t_arco = 0;
 
 int imagemIndex = 0;
 
@@ -64,25 +64,32 @@ void setup() {
 }
 
 void loop() {
-  server.handleClient();
-
+  
 if (analogRead(sensor) == 0) {
     detect += 1;
     if (detect == 1) {
+      if (Ngiro == 5){ Ngiro = 0;}
       Serial.println("detectou");
-      t_giro = micros() - tempoSensor;
-      t_arco = t_giro / numSetores;
+      t_giro[Ngiro]  = micros() - tempoSensor;
+      Mgiro = (t_giro[0] + t_giro[1] + t_giro[2] + t_giro[3] + t_giro[4]) / 5;
+      t_arco = Mgiro / numSetores;
+      Ngiro += 1; 
+      Serial.println(t_giro[Ngiro]);
+      Serial.println(t_arco);
+    } else if(detect == 2) {
       tempoSensor = micros();
       tempo = micros();
-      Serial.println(t_giro);
-      Serial.println(t_arco);
-    }
+      server.handleClient();
+    } 
+  } else {
+  detect = 0;
   }
 
 
 
 
   if (micros() >= (tempo + t_arco)) {
+    tempo += t_arco;
     for (int i = 0; i < LED_COUNT; i++) 
     {
       if (i < 7) {
@@ -95,35 +102,11 @@ if (analogRead(sensor) == 0) {
         green = imagem1[estado][1];
         blue = imagem1[estado][2];
 
-        /*
-        if(green < 150){
-          green = 0;
-        }else {
-          green = 250;
-        }
-        if(red < 125){
-          red = 0;
-        }else {
-          red = 250;
-        }
-        if(blue <= 125){
-          blue = 0;
-        }else {
-          blue = 250;
-        }
-        
-        blue =50;
-        green = 100;
-        */
         if (blue && red && green == 255) {
           blue = 0;
           red = 0;
           green = 0;
-        } //else {
-          //red = 255;
-         // green = 25;
-          //blue = 0;
-        //}
+        }
 
 
 
@@ -137,14 +120,13 @@ if (analogRead(sensor) == 0) {
       strip.setPixelColor(i, strip.Color(255, 25, 0));
     }
     j += 1;
-    tempo = micros();
     strip.show();
     //Serial.println(j);
-  }
-  if (j >= largura) {
-    Serial.println(j);
-    j = 0;
-    detect = 0;
+    
+    if (j == largura) {
+      Serial.println(j);
+      j = 0;
+    }
   }
   
 }
