@@ -1,18 +1,48 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char *ssid = "SEU_SSID";
-const char *password = "SUA_SENHA";
+const char *ssid = "relogio";
+const char *password = "holografico";
 
 WebServer server(80);
 
-int ledPin = 2; // Pin do LED
 int numeros[5] = {123, 456, 789, 101, 112}; // Array com os 5 números
 
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
+int largura = 29;
+int LED_COUNT = 36;
+int LED_PIN = 15, sensor = 36;
+int detect = 0;
 
+int numSetores = 8*largura, estado = 1, j = 0;
+unsigned long int tempoSensor = 0, tempo = 0, t_giro = 0, t_arco = 0;
+
+int imagemIndex = 0;
+
+// NeoPixel
+uint8_t green = 0, red = 0, blue = 0;
+
+Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+/*
+// Argument 1 = Number of pixels in NeoPixel strip
+// Argument 2 = Arduino pin number (most are valid)
+// Argument 3 = Pixel type flags, add together as needed:
+//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
+//   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
+//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
+//   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
+//   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
+*/
+
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(sensor, INPUT);
+
+  strip.begin();  // INITIALIZE NeoPixel strip object (REQUIRED)
+  strip.show();   // Turn OFF all pixels ASAP
+  strip.setBrightness(255);
+
+  
   Serial.begin(115200);
 
   WiFi.begin(ssid, password);
@@ -35,6 +65,88 @@ void setup() {
 
 void loop() {
   server.handleClient();
+
+if (analogRead(sensor) == 0) {
+    detect += 1;
+    if (detect == 1) {
+      Serial.println("detectou");
+      t_giro = micros() - tempoSensor;
+      t_arco = t_giro / numSetores;
+      tempoSensor = micros();
+      tempo = micros();
+      Serial.println(t_giro);
+      Serial.println(t_arco);
+    }
+  }
+
+
+
+
+  if (micros() >= (tempo + t_arco)) {
+    for (int i = 0; i < LED_COUNT; i++) 
+    {
+      if (i < 7) {
+        strip.setPixelColor(i, strip.Color(255, 25, 0));
+      } else 
+      {
+        estado = j + (i - 7) * largura;
+
+        red = imagem1[estado][0];
+        green = imagem1[estado][1];
+        blue = imagem1[estado][2];
+
+        /*
+        if(green < 150){
+          green = 0;
+        }else {
+          green = 250;
+        }
+        if(red < 125){
+          red = 0;
+        }else {
+          red = 250;
+        }
+        if(blue <= 125){
+          blue = 0;
+        }else {
+          blue = 250;
+        }
+        
+        blue =50;
+        green = 100;
+        */
+        if (blue && red && green == 255) {
+          blue = 0;
+          red = 0;
+          green = 0;
+        } //else {
+          //red = 255;
+         // green = 25;
+          //blue = 0;
+        //}
+
+
+
+        strip.setPixelColor(LED_COUNT - i + 3, strip.Color(red, green, blue));
+      }
+      if (i > 26) {
+        strip.setPixelColor(i, strip.Color(75, 0, 130));
+      }
+    }
+    for (int i = 0; i < 3; i++) {
+      strip.setPixelColor(i, strip.Color(255, 25, 0));
+    }
+    j += 1;
+    tempo = micros();
+    strip.show();
+    //Serial.println(j);
+  }
+  if (j >= largura) {
+    Serial.println(j);
+    j = 0;
+    detect = 0;
+  }
+  
 }
 
 void handleRoot() {
@@ -109,3 +221,6 @@ void handleSend() {
     server.send(400, "text/plain", "Requisição inválida");
   }
 }
+
+
+
