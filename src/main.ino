@@ -6,7 +6,7 @@
 // apenas um teste
 //mais um teste
 
-
+int teste = 25;
 
 // Imagens a serrem apresentadas
 int imagem1[][3] = {
