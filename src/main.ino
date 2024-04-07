@@ -3,6 +3,8 @@
 #include <Adafruit_NeoPixel.h>
 #include <Arduino.h>
 
+// apenas um teste
+
 
 // Imagens a serrem apresentadas
 int imagem1[][3] = {
