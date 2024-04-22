@@ -1,4 +1,4 @@
 # Relogio_Holografico_V2
  um relogio holografico
 
-apenas adicionand
+apenas adicionando uma descrição simples
