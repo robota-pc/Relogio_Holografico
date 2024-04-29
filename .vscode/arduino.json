@@ -3,4 +3,5 @@
     "board": "esp32:esp32:esp32",
     "programmer": "esptool",
     "sketch": "RELOGIO_HOLOGRAFICO.ino"
+
 }
