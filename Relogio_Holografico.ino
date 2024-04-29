@@ -1,12 +1,20 @@
-#include <Adafruit_NeoPixel.h>
-#include <Arduino.h>
+#include <WiFi.h>
+#include <WebServer.h>
 
+
+
+// Porta do servidor web (pode ser alterada se necessário)
+const int port = 80;
 
 
 int largura = 10;
 int LED_COUNT = 36, um_quarto = (LED_COUNT/4), tres_quarto = (3*LED_COUNT/4)-3 ;
 int LED_PIN = 15, sensor = 36;
 int detect = 0, cont = 0;
+
+
+// Página web
+WebServer server(port);
 
 
 
@@ -167,6 +175,7 @@ if (analogRead(sensor) == 0) {
     if (j > largura) {
       j = 1;
     }
+
   }
   
 }
