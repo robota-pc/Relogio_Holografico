@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <AUnit.h>
-#include "include/sensor_control.h"
-#include "include/config.h"
+#include "../include/sensor_control.h"
+#include "../include/config.h"
 
 // Mock das variáveis globais
 int detect = 0;

@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include "include/sensor_control.h"
-#include "include/utilities.h"
-#include "include/config.h"
+#include "../include/sensor_control.h"
+#include "../include/utilities.h"
+#include "../include/config.h"
 
 /**
  * @brief Função principal de controle do sensor e cálculo de tempos.

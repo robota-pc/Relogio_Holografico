@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <AUnit.h>
 #include <WebServer.h>
-#include "include/web_server_handlers.h"
-#include "include/config.h"
+#include "../include/web_server_handlers.h"
+#include "../include/config.h"
 
 // Mock do servidor web
 WebServer server(80);

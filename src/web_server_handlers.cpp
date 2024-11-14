@@ -1,7 +1,7 @@
-#include "include/web_server_handlers.h"
-#include "include/utilities.h"
-#include "include/config.h"
-#include "include/image_data.h"
+#include "../include/web_server_handlers.h"
+#include "../include/utilities.h"
+#include "../include/config.h"
+#include "../include/image_data.h"
 #include <Arduino.h>
 
 /**

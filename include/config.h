@@ -1,25 +1,36 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#ifdef ESP32_ENV
+#include <Arduino.h>
 #include <WebServer.h>
 #include <Adafruit_NeoPixel.h>
+#endif
 
 // Configurações de Wi-Fi
-const char *ssid = "relogio";
-const char *password = "holografico";
+#ifdef ESP32_ENV
+extern const char *ssid;
+extern const char *password;
+#endif
 
 // Configurações do servidor web
-const int serverPort = 80;
+#ifdef ESP32_ENV
+extern const int serverPort;
 extern WebServer server;
+#endif
 
 // Configurações do NeoPixel
-const int LED_PIN = 15;
-const int LED_COUNT = 36;
+#ifdef ESP32_ENV
+extern const int LED_PIN;
+extern const int LED_COUNT;
 extern Adafruit_NeoPixel strip;
+#endif
 
 // Configurações do sensor
-const int SENSOR_PIN = 36;
-const int NUM_SETORES = 87; // 3 * largura (largura = 29)
+#ifdef ESP32_ENV
+extern const int SENSOR_PIN;
+extern const int NUM_SETORES;
+#endif
 
 // Variáveis globais
 extern int detect;
@@ -31,4 +42,4 @@ extern unsigned long t_arco;
 extern unsigned long M_giro_antes;
 extern unsigned long M_giro_atual;
 
-#endif
+#endif // CONFIG_H
