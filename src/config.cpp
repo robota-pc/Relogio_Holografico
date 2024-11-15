@@ -18,7 +18,7 @@ const int SENSOR_PIN = 36;
 
 // Variáveis da imagem
 int largura = 29;
-int qntimagens = 3;
+int qntimagens = 2;
 int numSetores = qntimagens*largura;
 
 // Variaveis do filtro

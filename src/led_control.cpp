@@ -2,12 +2,13 @@
 #include "../include/sensor_control.h"
 #include "../include/utilities.h"
 #include "../include/config.h"
+#include "../include/image_data.h"
 
 int baixo = 9;
 int cima = 4;
 int estado = 0;
 int j = 0;
-int green = 200, red = 0, blue = 0;
+int green = 0, red = 0, blue = 0;
 
 void ledloop(){
     if (currentMicros >= (tempo + t_arco)) {
@@ -20,12 +21,13 @@ void ledloop(){
                 
             } else if(i > baixo)
             {
-                /*
-                estado = j + (i - baixo) * largura;
+                
+                estado = j + (LED_COUNT - i - baixo ) * largura;
                 red = imagem1[estado][0];
                 green = imagem1[estado][1];
                 blue = imagem1[estado][2];
                 
+                /*
                 if(green < 150){
                 green = 0;
                 }else {
@@ -41,11 +43,10 @@ void ledloop(){
                 }else {
                 blue = 250;
                 }
-                
-                blue =50;
-                green = 100;
                 */
-                if (blue && red && green == 255) {
+                
+                
+                if ((blue >= 230) or (red >= 230) or (green >= 230)) {
                 blue = 0;
                 red = 0;
                 green = 0;
@@ -54,10 +55,17 @@ void ledloop(){
                 // green = 25;
                 //blue = 0;
                 //}
+                
                 strip.setPixelColor( i , strip.Color(red, green, blue));
             } else {
                 strip.setPixelColor(i, strip.Color(255, 25, 0));
             }
+            
+        }
+        strip.show();  
+        j += 1;
+        if(j == largura - 1){
+            j = 0;
         }
     }
 }
