@@ -1,5 +1,6 @@
 #include "../include/utilities.h"
 #include <Arduino.h>
+#include "../include/config.h"
 
 /**
  * @brief Função de filtro com coeficientes.
@@ -10,7 +11,7 @@
  */
 unsigned long filtro(unsigned long y0, unsigned long y1) {
   // Aplicação de filtro simples
-  unsigned long y2 = 0.9 * y0 + 0.1 * y1;
+  unsigned long y2 = anterior * y0 + novo * y1;
   return y2;
 }
 
@@ -51,7 +52,7 @@ bool parseStringToIntMatrix(String inputString, int imagem[1080][4]) {
       Serial.println("Erro ao converter token para inteiro: " + token);
       return false;
     }
-
+ 
     imagem[rowIndex][colIndex] = value;
     colIndex++;
     if (colIndex >= 4) {

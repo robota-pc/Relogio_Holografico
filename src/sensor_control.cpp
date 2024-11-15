@@ -11,7 +11,7 @@ void sensorLoop() {
   int sensorValue = analogRead(SENSOR_PIN);
   if (sensorValue == -1) {
     Serial.println("Erro na leitura do sensor.");
-    return;
+    return; 
   }
 
   if (sensorValue == 0) {
@@ -24,8 +24,12 @@ void sensorLoop() {
       Serial.println("\n;");
       Serial.println("Detectou");
 
-      unsigned long currentMicros = micros();
+      Serial.println(currentMicros);
+      Serial.println(tempoSensor);
+      currentMicros = micros();
       t_giro[N_giro] = currentMicros - tempoSensor;
+      tempoSensor = micros();
+      Serial.println(t_giro[N_giro]);
 
       // Verificação para evitar divisão por zero
       if (t_giro[N_giro] == 0) {
@@ -34,15 +38,16 @@ void sensorLoop() {
       }
 
       // Cálculo do tempo médio de giro
-      unsigned long sumSquares = 0;
+      unsigned long sum = 0;
       for (int i = 0; i < 5; i++) {
-        sumSquares += t_giro[i] * t_giro[i];
+        sum += t_giro[i] ;
       }
-      M_giro_atual = sqrt(sumSquares) / 5;
+      M_giro_atual = sum / 5;
       M_giro_atual = filtro(M_giro_antes, M_giro_atual);
       M_giro_antes = M_giro_atual;
+      t_giro[N_giro] = M_giro_atual;
 
-      t_arco = M_giro_atual / NUM_SETORES;
+      t_arco = M_giro_atual / numSetores;
       N_giro += 1;
 
       Serial.print("Tempo de giro [");
@@ -53,18 +58,21 @@ void sensorLoop() {
       Serial.print("Tempo por setor: ");
       Serial.println(t_arco);
       Serial.println(";\n");
-    } else if (detect == 2) {
-      tempoSensor = micros();
-      tempo = micros();
-    }
+
+      Serial.print("array de tempo: ");
+      for (int  i = 0; i < 5; i++){
+        Serial.print(t_giro[i]);
+        Serial.print("; ");
+      }
+      Serial.println(";\n");
+
+
+    } 
   } else {
     detect = 0;
   }
 
   // Atualização do tempo e controle dos LEDs
-  unsigned long currentMicros = micros();
-  if (currentMicros >= (tempo + t_arco)) {
-    tempo += t_arco;
-    // Aqui você pode adicionar o código para atualizar os LEDs
-  }
+  currentMicros = micros();
+
 }
