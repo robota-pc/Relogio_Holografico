@@ -44,7 +44,7 @@ void loop() {
   sensorLoop();
 
   //Função para ativação dos LEDs
-  //ledloop();
+  ledloop();
 
   // Lida com requisições do servidor web
   server.handleClient();
