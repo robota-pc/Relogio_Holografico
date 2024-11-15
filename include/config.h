@@ -29,12 +29,25 @@ extern Adafruit_NeoPixel strip;
 // Configurações do sensor
 #ifdef ESP32_ENV
 extern const int SENSOR_PIN;
-extern const int NUM_SETORES;
+#endif
+
+// Variáveis da imagem
+#ifdef ESP32_ENV
+extern int largura;
+extern int qntimagens;
+extern int numSetores;
+#endif
+
+// Variaveis do filtro
+#ifdef ESP32_ENV
+extern float anterior;
+extern float novo;
 #endif
 
 // Variáveis globais
 extern int detect;
 extern int N_giro;
+extern unsigned long currentMicros;
 extern unsigned long tempoSensor;
 extern unsigned long tempo;
 extern unsigned long t_giro[5];

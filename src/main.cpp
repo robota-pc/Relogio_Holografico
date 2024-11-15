@@ -5,11 +5,11 @@
 #include "../include/sensor_control.h"
 #include "../include/utilities.h"
 #include "../include/image_data.h"
-
+#include "../include/led_control.h"
 
 void setup() {
   // Inicialização das portas
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT); 
   pinMode(SENSOR_PIN, INPUT);
 
   // Inicialização do NeoPixel
@@ -43,6 +43,12 @@ void loop() {
   // Função de controle do sensor
   sensorLoop();
 
+  //Função para ativação dos LEDs
+  //ledloop();
+
   // Lida com requisições do servidor web
   server.handleClient();
 }
+ 
+
+

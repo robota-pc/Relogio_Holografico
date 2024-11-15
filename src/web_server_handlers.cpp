@@ -9,6 +9,8 @@
  */
 void handleRoot() {
   String page = "<html><body>";
+  page += "<h1>detectou:</h1>";
+  page += "<p>" + String(detect) + "</p>";
   page += "<h1>Números:</h1>";
   // Exibir os 5 números com verificação de valores
   for (int i = 0; i < 5; i++) {
