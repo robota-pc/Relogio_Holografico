@@ -27,14 +27,9 @@ void sensorLoop() {
       Serial.println("\n;");
       Serial.println("Detectou");
 
-      Serial.println(currentMicros);
-      Serial.println(tempoSensor);
       currentMicros = micros();
       t_giro[N_giro] = currentMicros - tempoSensor;
       tempoSensor = micros();
-      Serial.println("aaaa");
-      Serial.println(t_giro[N_giro]);
-      Serial.println("aaaa");
 
       // Verificação para evitar divisão por zero
       if (t_giro[N_giro] == 0) {
@@ -47,20 +42,10 @@ void sensorLoop() {
       for (int i = 0; i < 5; i++) {
         sum += t_giro[i] ;
       }
-      
-      Serial.println("bbb");
-      Serial.println(sum);
-      Serial.println("bbb");
-
       M_giro_atual = sum / 5;
       M_giro_atual = filtro(M_giro_antes, M_giro_atual);
       M_giro_antes = M_giro_atual;
       t_giro[N_giro] = M_giro_atual;
-
-      Serial.println("cccc");
-      Serial.println(t_giro[N_giro]);
-      Serial.println("cccc");
-
       t_arco = M_giro_atual / numSetores;
       
 
@@ -80,8 +65,7 @@ void sensorLoop() {
       }
       Serial.println(";\n");
 
-      Serial.print("oioioi");
-      Serial.print( t_giro[N_giro]);
+
       if (h==49) {
         for ( int i = 0; i< 49; i++ ) {
           historico[i] = historico[i+1];
@@ -91,7 +75,7 @@ void sensorLoop() {
         historico[h] =  t_giro[N_giro];
         h += 1;
       }
-      
+
       N_giro += 1;
 
     } 
