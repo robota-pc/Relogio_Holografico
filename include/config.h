@@ -50,6 +50,7 @@ extern int N_giro;
 extern unsigned long currentMicros;
 extern unsigned long tempoSensor;
 extern unsigned long tempo;
+extern unsigned long historico[50];
 extern unsigned long t_giro[5];
 extern unsigned long t_arco;
 extern unsigned long M_giro_antes;

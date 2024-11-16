@@ -46,7 +46,7 @@ void ledloop(){
                 */
                 
                 
-                if ((blue >= 230) or (red >= 230) or (green >= 230)) {
+                if ((blue >= 250) or (red >= 250) or (green >= 250)) {
                 blue = 0;
                 red = 0;
                 green = 0;
