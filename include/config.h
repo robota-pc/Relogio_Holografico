@@ -21,6 +21,7 @@ extern WebServer server;
 
 // Configurações do NeoPixel
 #ifdef ESP32_ENV
+extern bool modo;
 extern const int LED_PIN;
 extern const int LED_COUNT;
 extern Adafruit_NeoPixel strip;

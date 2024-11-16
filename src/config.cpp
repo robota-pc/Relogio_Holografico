@@ -9,6 +9,7 @@ const int serverPort = 80;
 WebServer server(serverPort);
 
 // Configurações do NeoPixel
+bool modo = 1;
 const int LED_PIN = 15;
 const int LED_COUNT = 36;
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
