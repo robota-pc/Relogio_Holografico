@@ -71,11 +71,12 @@ void handleRoot() {
   page += "</form>";
 
   // Enviar 5 valores numéricos
-  page += "<h2>Enviar 5 Valores Numéricos:</h2>";
+  page += "<h2>Enviar Valores das Variaveis:</h2>";
   page += "<form method='post' action='/send_values'>";
   for (int i = 0; i < 5; i++) {
-    page += "Valor " + String(i + 1) + ": <input type='number' name='value" + String(i) + "'><br>";
+    page += "Valor " + String(i) + ": <input type='number' name='value" + String(i) + "'><br>";
   }
+   page += "Valor 1 = peso valor antigo; valor 2 = peso valor novo; valor 3 = qntimagens";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
@@ -91,8 +92,11 @@ void handleSendValues() {
   for (int i = 0; i < 5; i++) {
     if (server.hasArg("value" + String(i))) {
       int value = server.arg("value" + String(i)).toInt();
-      Serial.println("Valor " + String(i + 1) + ": " + String(value));
+      Serial.println("Valor " + String(i) + ": " + String(value));
       // Aqui você pode atribuir os valores a variáveis específicas
+      if (i == 0 ) anterior = value;
+      if (i == 1 ) novo = value;
+      if (i == 2 ) qntimagens = value;
     }
   }
   server.send(200, "text/plain", "Valores recebidos com sucesso.");
