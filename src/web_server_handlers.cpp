@@ -76,7 +76,9 @@ void handleRoot() {
   for (int i = 0; i < 5; i++) {
     page += "Valor " + String(i) + ": <input type='number' name='value" + String(i) + "'><br>";
   }
-   page += "Valor 1 = peso valor antigo; valor 2 = peso valor novo; valor 3 = qntimagens";
+  page += "Valor 1 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
+  page += " valor 2 = peso valor novo; valor atual = " + String(novo) + "'><br>";
+  page += "valor 3 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
@@ -91,12 +93,25 @@ void handleRoot() {
 void handleSendValues() {
   for (int i = 0; i < 5; i++) {
     if (server.hasArg("value" + String(i))) {
-      int value = server.arg("value" + String(i)).toInt();
+      float value = server.arg("value" + String(i)).toFloat() / 10;
+      float value2 = server.arg("value" + String(i)).toInt();
       Serial.println("Valor " + String(i) + ": " + String(value));
       // Aqui você pode atribuir os valores a variáveis específicas
-      if (i == 0 ) anterior = value;
-      if (i == 1 ) novo = value;
-      if (i == 2 ) qntimagens = value;
+      if (i == 0 ) {
+        if(value != 0.0) {
+          anterior = value;
+          novo = 1 - anterior; 
+        }
+      }
+      if (i == 1 ) {
+        if (value != 0.0) {
+          novo = value;
+          anterior = 1 - novo;
+        }
+      }
+      if (i == 2 ) {
+        if (value2 != 0) qntimagens = value2;
+      }
     }
   }
   server.send(200, "text/plain", "Valores recebidos com sucesso.");
@@ -106,8 +121,7 @@ void handleSendValues() {
  * @brief Função para ligar o LED.
  */
 void handleLedOn() {
-    strip.fill(strip.Color(255, 255, 255), 0, strip.numPixels());
-    strip.show();
+    modo = 1;
     server.send(200, "text/plain", "LED ligado");
 }
 
@@ -115,6 +129,7 @@ void handleLedOn() {
  * @brief Função para desligar o LED.
  */
 void handleLedOff() {
+    modo = 0; 
     strip.clear();
     strip.show();
     server.send(200, "text/plain", "LED desligado");
