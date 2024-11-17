@@ -79,6 +79,7 @@ void handleRoot() {
   page += "Valor 1 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
   page += " valor 2 = peso valor novo; valor atual = " + String(novo) + "'><br>";
   page += "valor 3 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
+  page += "valor 4 = sessoes; valor atual = " + String(sessoes) + "'><br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
@@ -111,6 +112,14 @@ void handleSendValues() {
       }
       if (i == 2 ) {
         if (value2 != 0) qntimagens = value2;
+      }
+      if (i == 3){
+        sessoes = value2;
+        if (value2 == 0){
+          numSetores = qntimagens*largura;
+        } else {
+          numSetores = sessoes;
+        }
       }
     }
   }

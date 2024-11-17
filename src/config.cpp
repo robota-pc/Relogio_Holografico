@@ -28,6 +28,7 @@ float novo = 0.8;
 
 
 // Variáveis globais
+int sessoes = 1;
 int detect = 0;
 int N_giro = 0;
 unsigned long currentMicros = 0;

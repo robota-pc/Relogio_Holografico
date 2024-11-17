@@ -46,6 +46,7 @@ extern float novo;
 #endif
 
 // Variáveis globais
+extern int sessoes;
 extern int detect;
 extern int N_giro;
 extern unsigned long currentMicros;
