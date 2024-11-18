@@ -26,6 +26,7 @@ void handleSystemData() {
     json += "," + String(historico[i]);
   }
   json += "],";
+  json += "\"t_arco\":" + String(t_arco) + ",";
   json += "\"anterior\":" + String(anterior) + ",";
   json += "\"novo\":" + String(novo) + ",";
   json += "\"qntimagens\":" + String(qntimagens) + ",";
