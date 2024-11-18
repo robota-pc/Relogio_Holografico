@@ -23,8 +23,8 @@ int qntimagens = 2;
 int numSetores = qntimagens*largura;
 
 // Variaveis do filtro
-float anterior = 0.2;
-float novo = 0.8;
+float anterior = 0.6;
+float novo = 0.4;
 
 
 // Variáveis globais
