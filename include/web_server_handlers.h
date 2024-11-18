@@ -1,11 +1,15 @@
 #ifndef WEB_SERVER_HANDLERS_H
 #define WEB_SERVER_HANDLERS_H
 
-#include "esp_http_server.h"
+#include <WebServer.h>
 
-void start_webserver();
-void handle_led_on(httpd_req_t *req);
-void handle_led_off(httpd_req_t *req);
-void handle_system_data(httpd_req_t *req);
+// Declarações de funções
+void handleRoot();
+void handleLedOn();
+void handleLedOff();
+void handleSend();
+void handleTGiroData();
+void handleSystemData();
+void handleSendValues();
 
 #endif // WEB_SERVER_HANDLERS_H

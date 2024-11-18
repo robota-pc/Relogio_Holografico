@@ -1,8 +1,9 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
-#include <stdint.h>
+#include <Arduino.h>
 
-uint32_t get_system_uptime();
+unsigned long filtro(unsigned long y0, unsigned long y1);
+bool parseStringToIntMatrix(String inputString, int imagem[1080][4]);
 
-#endif // UTILITIES_H
+#endif
