@@ -1,6 +1,7 @@
 #ifndef LED_CONTROL_H
 #define LED_CONTROL_H
 
-void ledloop();
+void led_init(void);
+void led_loop(void);
 
-#endif
+#endif // LED_CONTROL_H
