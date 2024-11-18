@@ -1,56 +1,42 @@
-#include <Arduino.h>
-#include <WiFi.h>
-#include "../include/config.h"
-#include "../include/web_server_handlers.h"
-#include "../include/sensor_control.h"
-#include "../include/utilities.h"
-#include "../include/image_data.h"
-#include "../include/led_control.h"
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "nvs_flash.h"
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "esp_log.h"
+#include "esp_http_server.h"
+#include "led_control.h"
+#include "sensor_control.h"
+#include "web_server.h"
+#include "config.h"
 
-void setup() {
-  // Inicialização das portas
-  pinMode(LED_PIN, OUTPUT); 
-  pinMode(SENSOR_PIN, INPUT);
+static const char *TAG = "MAIN";
 
-  // Inicialização do NeoPixel
-  strip.begin();
-  strip.show(); // Apaga todos os pixels
-  strip.setBrightness(255);
+void app_main() {
+    ESP_LOGI(TAG, "Inicializando...");
 
-  // Inicialização serial
-  Serial.begin(115200);
+    // Inicialização do NVS
+    ESP_ERROR_CHECK(nvs_flash_init());
 
-  // Conexão Wi-Fi
-  WiFi.begin(ssid, password);
-  Serial.println("Conectando ao WiFi...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
-  }
-  Serial.println("\nConectado ao WiFi");
-  Serial.print("Endereço IP: ");
-  Serial.println(WiFi.localIP());
+    // Inicialização do Wi-Fi
+    wifi_init();
 
-  // Configuração das rotas do servidor web
-  server.on("/", HTTP_GET, handleRoot);
-  server.on("/led/on", HTTP_GET, handleLedOn);
-  server.on("/led/off", HTTP_GET, handleLedOff);
-  server.on("/send", HTTP_POST, handleSend);
-  server.on("/t_giro_data", HTTP_GET, handleTGiroData);  // Dados do gráfico
-  server.on("/system_data", HTTP_GET, handleSystemData); // Nova rota para dados do sistema
-  server.on("/send_values", HTTP_POST, handleSendValues);  // Envio de valores numéricos
-  server.begin();
-}
+    // Inicialização dos LEDs
+    led_init();
 
-void loop() {
-  // Função de controle do sensor
-  sensorLoop();
+    // Inicialização do sensor
+    sensor_init();
 
-  // Função para ativação dos LEDs
-  if (modo == 1){
-    ledloop();
-  }
+    // Inicialização do servidor web
+    web_server_init();
 
-  // Lida com requisições do servidor web
-  server.handleClient();
+    // Loop principal
+    while (true) {
+        sensor_loop();
+        if (get_led_mode() == 1) {
+            led_loop();
+        }
+        vTaskDelay(pdMS_TO_TICKS(10)); // Delay para evitar sobrecarga
+    }
 }

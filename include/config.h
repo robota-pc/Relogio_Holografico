@@ -1,61 +1,22 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#ifdef ESP32_ENV
-#include <Arduino.h>
-#include <WebServer.h>
-#include <Adafruit_NeoPixel.h>
-#endif
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 // Configurações de Wi-Fi
-#ifdef ESP32_ENV
-extern const char *ssid;
-extern const char *password;
-#endif
+#define WIFI_SSID "relogio"
+#define WIFI_PASS "holografico"
 
-// Configurações do servidor web
-#ifdef ESP32_ENV
-extern const int serverPort;
-extern WebServer server;
-#endif
+// Configurações dos LEDs
+#define LED_PIN GPIO_NUM_15
+#define LED_COUNT 36
 
-// Configurações do NeoPixel
-#ifdef ESP32_ENV
-extern bool modo;
-extern const int LED_PIN;
-extern const int LED_COUNT;
-extern Adafruit_NeoPixel strip;
-#endif
+// Configuração do sensor
+#define SENSOR_PIN GPIO_NUM_36
 
-// Configurações do sensor
-#ifdef ESP32_ENV
-extern const int SENSOR_PIN;
-#endif
-
-// Variáveis da imagem
-#ifdef ESP32_ENV
-extern int largura;
-extern int qntimagens;
-extern int numSetores;
-#endif
-
-// Variaveis do filtro
-#ifdef ESP32_ENV
-extern float anterior;
-extern float novo;
-#endif
-
-// Variáveis globais
-extern int sessoes;
-extern int detect;
-extern int N_giro;
-extern unsigned long currentMicros;
-extern unsigned long tempoSensor;
-extern unsigned long tempo;
-extern unsigned long historico[50];
-extern unsigned long t_giro[5];
-extern unsigned long t_arco;
-extern unsigned long M_giro_antes;
-extern unsigned long M_giro_atual;
+void wifi_init(void);
+bool get_led_mode(void);
+void set_led_mode(bool mode);
 
 #endif // CONFIG_H
