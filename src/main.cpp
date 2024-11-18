@@ -37,6 +37,7 @@ void setup() {
   server.on("/led/off", HTTP_GET, handleLedOff);
   server.on("/send", HTTP_POST, handleSend);
   server.on("/t_giro_data", HTTP_GET, handleTGiroData);  // Dados do gráfico
+  server.on("/system_data", HTTP_GET, handleSystemData); // Nova rota para dados do sistema
   server.on("/send_values", HTTP_POST, handleSendValues);  // Envio de valores numéricos
   server.begin();
 }

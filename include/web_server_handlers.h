@@ -9,6 +9,7 @@ void handleLedOn();
 void handleLedOff();
 void handleSend();
 void handleTGiroData();
+void handleSystemData();
 void handleSendValues();
 
 #endif // WEB_SERVER_HANDLERS_H
