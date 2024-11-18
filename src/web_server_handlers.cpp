@@ -17,11 +17,35 @@ void handleTGiroData() {
 }
 
 /**
+ * @brief Retorna as variáveis do sistema em JSON.
+ */
+void handleSystemData() {
+  String json = "{";
+  json += "\"t_giro\":[" + String(historico[0]); // Exemplo com historico
+  for (int i = 1; i < 5; i++) {
+    json += "," + String(historico[i]);
+  }
+  json += "],";
+  json += "\"anterior\":" + String(anterior) + ",";
+  json += "\"novo\":" + String(novo) + ",";
+  json += "\"qntimagens\":" + String(qntimagens) + ",";
+  json += "\"sessoes\":" + String(sessoes) + ",";
+  json += "\"numSetores\":" + String(numSetores) + ",";
+  json += "\"modo\":" + String(modo);
+  json += "}";
+  server.send(200, "application/json", json);
+}
+
+
+/**
  * @brief Função para lidar com a rota raiz.
  */
 void handleRoot() {
   String page = "<html><body>";
-  page += "<h1>Gráfico Dinâmico dos Valores de t_giro</h1>";
+  page += "<h1>Sistema - Controle e Monitoramento</h1>";
+
+  // Gráfico de t_giro
+  page += "<h2>Gráfico dos Valores de t_giro</h2>";
   page += "<canvas id='tGiroChart' width='400' height='200'></canvas>";
   page += "<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
   page += "<script>";
@@ -29,19 +53,14 @@ void handleRoot() {
   page += "const tGiroChart = new Chart(ctx, {";
   page += "  type: 'line',";
   page += "  data: {";
-  page += "    labels: Array.from({length: 50}, (_, i) => i + 1),"; // Últimos 50 valores
+  page += "    labels: Array.from({length: 50}, (_, i) => i + 1),";
   page += "    datasets: [{";
   page += "      label: 'Valores de t_giro',";
-  page += "      data: [],"; // Inicialmente vazio
+  page += "      data: [],";
   page += "      borderColor: 'rgba(75, 192, 192, 1)',";
   page += "      backgroundColor: 'rgba(75, 192, 192, 0.2)',";
   page += "      tension: 0.1";
   page += "    }]";
-  page += "  },";
-  page += "  options: {";
-  page += "    scales: {";
-  page += "      y: { beginAtZero: true }";
-  page += "    }";
   page += "  }";
   page += "});";
 
@@ -52,10 +71,30 @@ void handleRoot() {
   page += "  tGiroChart.data.datasets[0].data = data;";
   page += "  tGiroChart.update();";
   page += "}";
-
-  // Atualizar a cada 1 segundo
   page += "setInterval(fetchTGiroData, 1000);";
 
+  page += "</script>";
+
+  // Tabela de variáveis
+  page += "<h2>Variáveis do Sistema</h2>";
+  page += "<table border='1'>";
+  page += "<thead><tr><th>Variável</th><th>Valor</th></tr></thead>";
+  page += "<tbody id='systemDataTable'></tbody>";
+  page += "</table>";
+
+  // Atualizar tabela dinamicamente
+  page += "<script>";
+  page += "async function fetchSystemData() {";
+  page += "  const response = await fetch('/system_data');";
+  page += "  const data = await response.json();";
+  page += "  const table = document.getElementById('systemDataTable');";
+  page += "  table.innerHTML = '';"; // Limpar a tabela
+  page += "  for (const [key, value] of Object.entries(data)) {";
+  page += "    const row = `<tr><td>${key}</td><td>${Array.isArray(value) ? value.join(', ') : value}</td></tr>`;";
+  page += "    table.innerHTML += row;";
+  page += "  }";
+  page += "}";
+  page += "setInterval(fetchSystemData, 1000);"; // Atualizar a cada 1 segundo
   page += "</script>";
 
   // Controle de LED
