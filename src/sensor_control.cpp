@@ -6,6 +6,9 @@
 /**
  * @brief Função principal de controle do sensor e cálculo de tempos.
  */
+
+int h = 0;
+
 void sensorLoop() {
   // Leitura do sensor com tratamento de erros
   int sensorValue = analogRead(SENSOR_PIN);
@@ -24,12 +27,9 @@ void sensorLoop() {
       Serial.println("\n;");
       Serial.println("Detectou");
 
-      Serial.println(currentMicros);
-      Serial.println(tempoSensor);
       currentMicros = micros();
       t_giro[N_giro] = currentMicros - tempoSensor;
       tempoSensor = micros();
-      Serial.println(t_giro[N_giro]);
 
       // Verificação para evitar divisão por zero
       if (t_giro[N_giro] == 0) {
@@ -46,9 +46,8 @@ void sensorLoop() {
       M_giro_atual = filtro(M_giro_antes, M_giro_atual);
       M_giro_antes = M_giro_atual;
       t_giro[N_giro] = M_giro_atual;
-
       t_arco = M_giro_atual / numSetores;
-      N_giro += 1;
+      
 
       Serial.print("Tempo de giro [");
       Serial.print(N_giro);
@@ -66,6 +65,18 @@ void sensorLoop() {
       }
       Serial.println(";\n");
 
+
+      if (h==49) {
+        for ( int i = 0; i< 49; i++ ) {
+          historico[i] = historico[i+1];
+        }
+        historico[h] = t_giro[N_giro];
+      } else{
+        historico[h] =  t_giro[N_giro];
+        h += 1;
+      }
+
+      N_giro += 1;
 
     } 
   } else {

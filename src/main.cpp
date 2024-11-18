@@ -36,6 +36,8 @@ void setup() {
   server.on("/led/on", HTTP_GET, handleLedOn);
   server.on("/led/off", HTTP_GET, handleLedOff);
   server.on("/send", HTTP_POST, handleSend);
+  server.on("/t_giro_data", HTTP_GET, handleTGiroData);  // Dados do gráfico
+  server.on("/send_values", HTTP_POST, handleSendValues);  // Envio de valores numéricos
   server.begin();
 }
 
@@ -43,12 +45,11 @@ void loop() {
   // Função de controle do sensor
   sensorLoop();
 
-  //Função para ativação dos LEDs
-  ledloop();
+  // Função para ativação dos LEDs
+  if (modo == 1){
+    ledloop();
+  }
 
   // Lida com requisições do servidor web
   server.handleClient();
 }
- 
-
-

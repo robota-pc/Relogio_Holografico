@@ -21,6 +21,7 @@ extern WebServer server;
 
 // Configurações do NeoPixel
 #ifdef ESP32_ENV
+extern bool modo;
 extern const int LED_PIN;
 extern const int LED_COUNT;
 extern Adafruit_NeoPixel strip;
@@ -45,11 +46,13 @@ extern float novo;
 #endif
 
 // Variáveis globais
+extern int sessoes;
 extern int detect;
 extern int N_giro;
 extern unsigned long currentMicros;
 extern unsigned long tempoSensor;
 extern unsigned long tempo;
+extern unsigned long historico[50];
 extern unsigned long t_giro[5];
 extern unsigned long t_arco;
 extern unsigned long M_giro_antes;
