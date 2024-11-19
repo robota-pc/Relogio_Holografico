@@ -137,7 +137,7 @@ void handleRoot() {
 void handleSendValues() {
   for (int i = 0; i < 5; i++) {
     if (server.hasArg("value" + String(i))) {
-      float value = server.arg("value" + String(i)).toFloat() / 10;
+      float value = server.arg("value" + String(i)).toFloat() / 1000;
       float value2 = server.arg("value" + String(i)).toInt();
       Serial.println("Valor " + String(i) + ": " + String(value));
       // Aqui você pode atribuir os valores a variáveis específicas
