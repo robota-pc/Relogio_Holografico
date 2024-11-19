@@ -32,7 +32,8 @@ void handleSystemData() {
   json += "\"qntimagens\":" + String(qntimagens) + ",";
   json += "\"sessoes\":" + String(sessoes) + ",";
   json += "\"numSetores\":" + String(numSetores) + ",";
-  json += "\"modo\":" + String(modo);
+  json += "\"modo\":" + String(modo) + ",";
+  json += "\"detect\":" + String(detect);
   json += "}";
   server.send(200, "application/json", json);
 }
@@ -154,7 +155,10 @@ void handleSendValues() {
         }
       }
       if (i == 2 ) {
-        if (value2 != 0) qntimagens = value2;
+        if (value2 != 0) {
+          qntimagens = value2;
+          numSetores = qntimagens*largura;
+        }        
       }
       if (i == 3){
         sessoes = value2;
