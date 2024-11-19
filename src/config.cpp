@@ -19,10 +19,10 @@ const int SENSOR_PIN = 36;
 
 // Variáveis da imagem
 int largura = 29;
-int qntimagens = 2;
+int qntimagens = 3;
 int numSetores = qntimagens*largura;
-int cima = 4;
-int baixo = 9;
+int cima = 10;
+int baixo = 7;
 
 // Variaveis do filtro
 float anterior = 0.9;
@@ -32,7 +32,7 @@ float novo = 0.1;
 // Variáveis globais
 int volta = 5;
 int volta_restante = 0;
-int sessoes = 1;
+int sessoes = 0;
 int detect = 0;
 int N_giro = 0;
 unsigned long currentMicros = 0;

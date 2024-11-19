@@ -20,6 +20,7 @@ void setup() {
   // Inicialização serial
   Serial.begin(115200);
 
+  /*
   // Conexão Wi-Fi
   WiFi.begin(ssid, password);
   Serial.println("Conectando ao WiFi...");
@@ -40,6 +41,7 @@ void setup() {
   server.on("/system_data", HTTP_GET, handleSystemData); // Nova rota para dados do sistema
   server.on("/send_values", HTTP_POST, handleSendValues);  // Envio de valores numéricos
   server.begin();
+  */
 }
 
 void loop() {
@@ -52,5 +54,5 @@ void loop() {
   }
 
   // Lida com requisições do servidor web
-  server.handleClient();
+  //server.handleClient();
 }
