@@ -8,9 +8,9 @@
  */
 void handleTGiroData() {
   String json = "[";
-  for (int i = 0; i < 50; i++) {  // Envia os últimos 50 valores
+  for (int i = 0; i < 150; i++) {  // Envia os últimos 50 valores
     json += String(historico[i]);  // Supondo valores cíclicos
-    if (i < 49) json += ",";
+    if (i < 149) json += ",";
   }
   json += "]";
   server.send(200, "application/json", json);
@@ -54,7 +54,7 @@ void handleRoot() {
   page += "const tGiroChart = new Chart(ctx, {";
   page += "  type: 'line',";
   page += "  data: {";
-  page += "    labels: Array.from({length: 50}, (_, i) => i + 1),";
+  page += "    labels: Array.from({length: 150}, (_, i) => i + 1),";
   page += "    datasets: [{";
   page += "      label: 'Valores de t_giro',";
   page += "      data: [],";
@@ -72,7 +72,7 @@ void handleRoot() {
   page += "  tGiroChart.data.datasets[0].data = data;";
   page += "  tGiroChart.update();";
   page += "}";
-  page += "setInterval(fetchTGiroData, 1000);";
+  page += "setInterval(fetchTGiroData, 250);";
 
   page += "</script>";
 
@@ -116,10 +116,10 @@ void handleRoot() {
   for (int i = 0; i < 5; i++) {
     page += "Valor " + String(i) + ": <input type='number' name='value" + String(i) + "'><br>";
   }
-  page += "Valor 1 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
-  page += " valor 2 = peso valor novo; valor atual = " + String(novo) + "'><br>";
-  page += "valor 3 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
-  page += "valor 4 = sessoes; valor atual = " + String(sessoes) + "'><br>";
+  page += "Valor 0 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
+  page += " valor 1 = peso valor novo; valor atual = " + String(novo) + "'><br>";
+  page += "valor 2 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
+  page += "valor 3 = sessoes; valor atual = " + String(sessoes) + "'><br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 

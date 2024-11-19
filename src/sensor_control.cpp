@@ -66,8 +66,8 @@ void sensorLoop() {
       Serial.println(";\n");
 
 
-      if (h==49) {
-        for ( int i = 0; i< 49; i++ ) {
+      if (h==149) {
+        for ( int i = 0; i< 149; i++ ) {
           historico[i] = historico[i+1];
         }
         historico[h] = t_giro[N_giro];
