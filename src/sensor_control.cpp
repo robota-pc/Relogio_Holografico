@@ -27,9 +27,9 @@ void sensorLoop() {
       Serial.println("\n;");
       Serial.println("Detectou");
 
-      currentMicros = micros();
+      currentMicros = millis();
       t_giro[N_giro] = currentMicros - tempoSensor;
-      tempoSensor = micros();
+      tempoSensor = millis();
 
       // Verificação para evitar divisão por zero
       if (t_giro[N_giro] == 0) {
@@ -88,6 +88,6 @@ void sensorLoop() {
   }
 
   // Atualização do tempo e controle dos LEDs
-  currentMicros = micros();
+  currentMicros = millis();
 
 }
