@@ -21,11 +21,17 @@ void ledloop(){
                 if (sessoes > 0){
                     if(j > sessoes) j = 1;
                     
-                    if ( j%2 == 0){
+                    if ( j%5 == 0){
                         strip.setPixelColor(i, strip.Color(255, 0, 0));
-                    } else {
+                    } else if(j%5 == 1) {
                         strip.setPixelColor(i, strip.Color(0, 0, 255));
-                    }
+                    } else if(j%5 == 2) {
+                        strip.setPixelColor(i, strip.Color(0, 255, 0));
+                    } else if(j%5 == 3) {
+                        strip.setPixelColor(i, strip.Color(255, 255, 0));
+                    } else {
+                        strip.setPixelColor(i, strip.Color(255, 0, 255));
+                    } 
 
                 } else {
                         
@@ -70,7 +76,7 @@ void ledloop(){
                         //}
                         
                         strip.setPixelColor( i , strip.Color(red, green, blue));
-                    } else {
+                    } else if (i <= baixo) {
                         strip.setPixelColor(i, strip.Color(255, 25, 0));
                     }
                 }
