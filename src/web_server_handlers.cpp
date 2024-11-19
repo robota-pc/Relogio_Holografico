@@ -120,8 +120,8 @@ void handleRoot() {
   page += " valor 1 = peso valor novo; valor atual = " + String(novo) + "'><br>";
   page += "valor 2 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
   page += "valor 3 = sessoes; valor atual = " + String(sessoes) + "'><br>";
-  page += "valor 4 = cima; valor atual = " + String(sessoes) + "'><br>";
-  page += "valor 5 = baixo; valor atual = " + String(sessoes) + "'><br>";
+  page += "valor 4 = cima; valor atual = " + String(cima) + "'><br>";
+  page += "valor 5 = baixo; valor atual = " + String(baixo) + "'><br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
