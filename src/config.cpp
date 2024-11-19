@@ -30,6 +30,8 @@ float novo = 0.1;
 
 
 // Variáveis globais
+int volta = 5;
+int volta_restante = 0;
 int sessoes = 1;
 int detect = 0;
 int N_giro = 0;

@@ -46,8 +46,12 @@ void sensorLoop() {
       M_giro_atual = filtro(M_giro_antes, M_giro_atual);
       M_giro_antes = M_giro_atual;
       t_giro[N_giro] = M_giro_atual;
-      t_arco = M_giro_atual / numSetores;
-      
+      if (volta == volta_restante) {
+        t_arco = M_giro_atual / numSetores;
+        volta_restante =0;
+      } else {
+        volta_restante += 1;
+      }
 
       Serial.print("Tempo de giro [");
       Serial.print(N_giro);

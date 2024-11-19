@@ -48,6 +48,8 @@ extern float novo;
 #endif
 
 // Variáveis globais
+extern int volta;
+extern int volta_restante;
 extern int sessoes;
 extern int detect;
 extern int N_giro;
