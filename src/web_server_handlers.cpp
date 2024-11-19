@@ -113,13 +113,15 @@ void handleRoot() {
   // Enviar 5 valores numéricos
   page += "<h2>Enviar Valores das Variaveis:</h2>";
   page += "<form method='post' action='/send_values'>";
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
     page += "Valor " + String(i) + ": <input type='number' name='value" + String(i) + "'><br>";
   }
   page += "Valor 0 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
   page += " valor 1 = peso valor novo; valor atual = " + String(novo) + "'><br>";
   page += "valor 2 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
   page += "valor 3 = sessoes; valor atual = " + String(sessoes) + "'><br>";
+  page += "valor 4 = cima; valor atual = " + String(sessoes) + "'><br>";
+  page += "valor 5 = baixo; valor atual = " + String(sessoes) + "'><br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
@@ -161,8 +163,15 @@ void handleSendValues() {
           numSetores = sessoes;
         }
       }
+      if (i == 4 ) {
+        cima = value2;
+      }
+      if (i == 5 ) {
+        baixo = value2;
+      }
     }
   }
+  
   server.send(200, "text/plain", "Valores recebidos com sucesso.");
 }
 

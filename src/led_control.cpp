@@ -4,8 +4,7 @@
 #include "../include/config.h"
 #include "../include/image_data.h"
 
-int baixo = 9;
-int cima = 4;
+
 int estado = 0;
 int j = 0;
 int green = 0, red = 0, blue = 0;

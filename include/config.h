@@ -37,6 +37,8 @@ extern const int SENSOR_PIN;
 extern int largura;
 extern int qntimagens;
 extern int numSetores;
+extern int cima;
+extern int baixo;
 #endif
 
 // Variaveis do filtro

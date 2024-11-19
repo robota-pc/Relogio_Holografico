@@ -21,6 +21,8 @@ const int SENSOR_PIN = 36;
 int largura = 29;
 int qntimagens = 2;
 int numSetores = qntimagens*largura;
+int cima = 4;
+int baixo = 9;
 
 // Variaveis do filtro
 float anterior = 0.6;
