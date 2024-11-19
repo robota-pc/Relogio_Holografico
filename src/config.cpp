@@ -25,8 +25,8 @@ int cima = 4;
 int baixo = 9;
 
 // Variaveis do filtro
-float anterior = 0.6;
-float novo = 0.4;
+float anterior = 0.9;
+float novo = 0.1;
 
 
 // Variáveis globais
