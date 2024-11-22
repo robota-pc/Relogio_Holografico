@@ -46,7 +46,7 @@ void setup() {
 
 void loop() {
   // Função de controle do sensor
-  sensorLoop();
+  //sensorLoop();
 
   // Função para ativação dos LEDs
   if (modo == 1){

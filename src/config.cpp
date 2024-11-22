@@ -18,8 +18,8 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 const int SENSOR_PIN = 36;
 
 // Variáveis da imagem
-int largura = 29;
-int qntimagens = 3;
+int largura = 20;
+int qntimagens = 2;
 int numSetores = qntimagens*largura;
 int cima = 8;
 int baixo = 8;
@@ -30,7 +30,7 @@ float novo = 0.1;
 
 
 // Variáveis globais
-int volta = 5;
+int volta = 2;
 int volta_restante = 0;
 int sessoes = 0;
 int detect = 0;
