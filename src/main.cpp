@@ -7,7 +7,8 @@
 #include "../include/image_data.h"
 #include "../include/led_control.h"
 
-void setup() {
+void setup() {]
+  Serial.println("oi");
   // Inicialização das portas
   pinMode(LED_PIN, OUTPUT); 
   pinMode(SENSOR_PIN, INPUT);
