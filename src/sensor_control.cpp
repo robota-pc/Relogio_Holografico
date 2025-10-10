@@ -10,7 +10,7 @@
 int h = 0;
 
 void sensorLoop() {
-  // Leitura do sensor com tratamento de erros
+  // Leitura do sensor com tratamento de errosfshhgfd
   int sensorValue = analogRead(SENSOR_PIN);
   if (sensorValue == -1) {
     Serial.println("Erro na leitura do sensor.");
