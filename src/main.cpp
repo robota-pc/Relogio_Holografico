@@ -9,7 +9,7 @@
 
 void setup() {]
   Serial.println("oi");
-  // Inicialização das portas
+  // Inicialização das portas gnfdndhfn
   pinMode(LED_PIN, OUTPUT); 
   pinMode(SENSOR_PIN, INPUT);
 
