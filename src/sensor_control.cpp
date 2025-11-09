@@ -10,7 +10,7 @@
 int h = 0;
 
 void sensorLoop() {
-  // Leitura do sensor com tratamento de erros
+  // Leitura do sensor com tratamento de errosfshhgfd
   int sensorValue = analogRead(SENSOR_PIN);
   if (sensorValue == -1) {
     Serial.println("Erro na leitura do sensor.");
@@ -27,9 +27,9 @@ void sensorLoop() {
       Serial.println("\n;");
       Serial.println("Detectou");
 
-      currentMicros = micros();
+      currentMicros = millis();
       t_giro[N_giro] = currentMicros - tempoSensor;
-      tempoSensor = micros();
+      tempoSensor = millis();
 
       // Verificação para evitar divisão por zero
       if (t_giro[N_giro] == 0) {
@@ -46,8 +46,12 @@ void sensorLoop() {
       M_giro_atual = filtro(M_giro_antes, M_giro_atual);
       M_giro_antes = M_giro_atual;
       t_giro[N_giro] = M_giro_atual;
-      t_arco = M_giro_atual / numSetores;
-      
+      if (volta == volta_restante) {
+        t_arco = M_giro_atual / numSetores;
+        volta_restante =0;
+      } else {
+        volta_restante += 1;
+      }
 
       Serial.print("Tempo de giro [");
       Serial.print(N_giro);
@@ -66,8 +70,8 @@ void sensorLoop() {
       Serial.println(";\n");
 
 
-      if (h==49) {
-        for ( int i = 0; i< 49; i++ ) {
+      if (h==149) {
+        for ( int i = 0; i< 149; i++ ) {
           historico[i] = historico[i+1];
         }
         historico[h] = t_giro[N_giro];
@@ -84,6 +88,6 @@ void sensorLoop() {
   }
 
   // Atualização do tempo e controle dos LEDs
-  currentMicros = micros();
+  currentMicros = millis();
 
 }

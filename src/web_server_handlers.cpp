@@ -8,9 +8,9 @@
  */
 void handleTGiroData() {
   String json = "[";
-  for (int i = 0; i < 50; i++) {  // Envia os últimos 50 valores
+  for (int i = 0; i < 150; i++) {  // Envia os últimos 50 valores
     json += String(historico[i]);  // Supondo valores cíclicos
-    if (i < 49) json += ",";
+    if (i < 149) json += ",";
   }
   json += "]";
   server.send(200, "application/json", json);
@@ -32,7 +32,8 @@ void handleSystemData() {
   json += "\"qntimagens\":" + String(qntimagens) + ",";
   json += "\"sessoes\":" + String(sessoes) + ",";
   json += "\"numSetores\":" + String(numSetores) + ",";
-  json += "\"modo\":" + String(modo);
+  json += "\"modo\":" + String(modo) + ",";
+  json += "\"detect\":" + String(detect);
   json += "}";
   server.send(200, "application/json", json);
 }
@@ -54,7 +55,7 @@ void handleRoot() {
   page += "const tGiroChart = new Chart(ctx, {";
   page += "  type: 'line',";
   page += "  data: {";
-  page += "    labels: Array.from({length: 50}, (_, i) => i + 1),";
+  page += "    labels: Array.from({length: 150}, (_, i) => i + 1),";
   page += "    datasets: [{";
   page += "      label: 'Valores de t_giro',";
   page += "      data: [],";
@@ -72,7 +73,7 @@ void handleRoot() {
   page += "  tGiroChart.data.datasets[0].data = data;";
   page += "  tGiroChart.update();";
   page += "}";
-  page += "setInterval(fetchTGiroData, 1000);";
+  page += "setInterval(fetchTGiroData, 250);";
 
   page += "</script>";
 
@@ -113,13 +114,16 @@ void handleRoot() {
   // Enviar 5 valores numéricos
   page += "<h2>Enviar Valores das Variaveis:</h2>";
   page += "<form method='post' action='/send_values'>";
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 7; i++) {
     page += "Valor " + String(i) + ": <input type='number' name='value" + String(i) + "'><br>";
   }
-  page += "Valor 1 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
-  page += " valor 2 = peso valor novo; valor atual = " + String(novo) + "'><br>";
-  page += "valor 3 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
-  page += "valor 4 = sessoes; valor atual = " + String(sessoes) + "'><br>";
+  page += "Valor 0 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
+  page += " valor 1 = peso valor novo; valor atual = " + String(novo) + "'><br>";
+  page += "valor 2 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
+  page += "valor 3 = sessoes; valor atual = " + String(sessoes) + "'><br>";
+  page += "valor 4 = cima; valor atual = " + String(cima) + "'><br>";
+  page += "valor 5 = baixo; valor atual = " + String(baixo) + "'><br>";
+  page += "valor 6 = volta; valor atual = " + String(volta) + "'><br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
@@ -134,7 +138,7 @@ void handleRoot() {
 void handleSendValues() {
   for (int i = 0; i < 5; i++) {
     if (server.hasArg("value" + String(i))) {
-      float value = server.arg("value" + String(i)).toFloat() / 10;
+      float value = server.arg("value" + String(i)).toFloat() / 1000;
       float value2 = server.arg("value" + String(i)).toInt();
       Serial.println("Valor " + String(i) + ": " + String(value));
       // Aqui você pode atribuir os valores a variáveis específicas
@@ -151,7 +155,10 @@ void handleSendValues() {
         }
       }
       if (i == 2 ) {
-        if (value2 != 0) qntimagens = value2;
+        if (value2 != 0) {
+          qntimagens = value2;
+          numSetores = qntimagens*largura;
+        }        
       }
       if (i == 3){
         sessoes = value2;
@@ -161,8 +168,18 @@ void handleSendValues() {
           numSetores = sessoes;
         }
       }
+      if (i == 4 ) {
+        cima = value2;
+      }
+      if (i == 5 ) {
+        baixo = value2;
+      }
+      if (i == 6 ) {
+        if (value2 != 0) volta = value2;
+      }
     }
   }
+  
   server.send(200, "text/plain", "Valores recebidos com sucesso.");
 }
 

@@ -37,6 +37,8 @@ extern const int SENSOR_PIN;
 extern int largura;
 extern int qntimagens;
 extern int numSetores;
+extern int cima;
+extern int baixo;
 #endif
 
 // Variaveis do filtro
@@ -46,13 +48,15 @@ extern float novo;
 #endif
 
 // Variáveis globais
+extern int volta;
+extern int volta_restante;
 extern int sessoes;
 extern int detect;
 extern int N_giro;
 extern unsigned long currentMicros;
 extern unsigned long tempoSensor;
 extern unsigned long tempo;
-extern unsigned long historico[50];
+extern unsigned long historico[150];
 extern unsigned long t_giro[5];
 extern unsigned long t_arco;
 extern unsigned long M_giro_antes;
