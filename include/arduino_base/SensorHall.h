@@ -4,7 +4,6 @@
 #include <Arduino.h>
 
 // --- Variáveis Externas (compartilhadas com main.cpp) ---
-extern volatile unsigned long contagemPulsos;
 extern double velocidadeAtualRPM;
 
 // --- Constantes de Configuração ---

@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <WiFi.h>
-#include "../include/config.h"
-#include "../include/web_server_handlers.h"
-#include "../include/sensor_control.h"
-#include "../include/utilities.h"
-#include "../include/image_data.h"
-#include "../include/led_control.h"
+#include "config.h"
+#include "web_server_handlers.h"
+#include "sensor_control.h"
+#include "utilities.h"
+#include "image_data.h"
+#include "led_control.h"
 
-void setup() {]
+void setup() {
   Serial.println("oi");
   // Inicialização das portas gnfdndhfn
   pinMode(LED_PIN, OUTPUT); 

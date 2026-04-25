@@ -1,7 +1,7 @@
 #include "SensorHall.h"
 
-// --- Variáveis Globais (Definidas aqui, Declaradas como extern no .h) ---
-volatile unsigned long contagemPulsos = 0;
+// --- Variáveis Globais ---
+static volatile unsigned long contagemPulsos = 0;
 double velocidadeAtualRPM = 0;
 unsigned long tempoAnteriorMedicao = 0;
 

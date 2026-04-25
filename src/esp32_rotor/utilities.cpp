@@ -1,6 +1,6 @@
-#include "../include/utilities.h"
+#include "utilities.h"
 #include <Arduino.h>
-#include "../include/config.h"
+#include "config.h"
 
 /**
  * @brief Função de filtro com coeficientes.

@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "../include/sensor_control.h"
-#include "../include/utilities.h"
-#include "../include/config.h"
-#include "../include/image_data.h"
+#include "sensor_control.h"
+#include "utilities.h"
+#include "config.h"
+#include "image_data.h"
 
 
 int estado = 0;

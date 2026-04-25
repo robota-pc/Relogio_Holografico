@@ -1,6 +1,6 @@
-#include "../include/web_server_handlers.h"
-#include "../include/config.h"
-#include "../include/utilities.h"
+#include "web_server_handlers.h"
+#include "config.h"
+#include "utilities.h"
 #include <Arduino.h>
 
 /**

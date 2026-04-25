@@ -9,12 +9,12 @@ double LeituraPots::getSetpointRPM() {
 void LeituraPots::getGanhosPID(double &kp, double &ki, double &kd) {
     
     // Leitura e Mapeamento dos Ganhos
-    double novoKp = map(analogRead(PIN_KP), 0, 1023, 0, (int)(KP_MAX * 100.0)) / 100.0; 
-    double novoKi = map(analogRead(PIN_KI), 0, 1023, 0, (int)(KI_MAX * 100.0)) / 100.0;  
-    double novoKd = map(analogRead(PIN_KD), 0, 1023, 0, (int)(KD_MAX * 100.0)) / 100.0; 
+    double novoKp = (analogRead(PIN_KP) / 1023.0) * KP_MAX;
+    double novoKi = (analogRead(PIN_KI) / 1023.0) * KI_MAX;
+    double novoKd = (analogRead(PIN_KD) / 1023.0) * KD_MAX;
 
     // Atualiza apenas se houver mudança significativa
-    if (abs(novoKp - _kpAtual) > 0.01 || abs(novoKi - _kiAtual) > 0.01 || abs(novoKd - _kdAtual) > 0.01) {
+    if (fabs(novoKp - _kpAtual) > 0.01 || fabs(novoKi - _kiAtual) > 0.01 || fabs(novoKd - _kdAtual) > 0.01) {
         _kpAtual = novoKp;
         _kiAtual = novoKi;
         _kdAtual = novoKd;
