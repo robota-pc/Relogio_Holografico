@@ -9,6 +9,8 @@ const int PIN_KP = A0;
 const int PIN_KI = A3;       
 const int PIN_KD = A1;     
 
+const int RPMmin = 100;    // RPM mínimo
+const int RPMmax = 1500; // RPM máximo
 
 class LeituraPots {
 public:

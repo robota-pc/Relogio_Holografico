@@ -8,7 +8,6 @@ bool imaDetectado = false;
 
 // Variáveis para o filtro PID
 double rpmFiltrado = 0.0;
-const double FATOR_SUAVIZACAO = 0.1;
 
 void contarGiro() {
     int valorBruto = analogRead(PIN_HALL);
