@@ -60,14 +60,45 @@ void setup() {
     //Serial.println("setup4");
     
     delay(2000);
+    //Serial.println("fim delay");
+
+    
+    lcd.setCursor(0, 0);
+    lcd.print("Calibracao");
+    lcd.setCursor(0, 1);
+    lcd.print("POTENCIOMETROS");
+
+    pots.inicializarPotenciometros();
+
+    Serial.println("Calibracao finalizada!");
+    lcd.setCursor(0, 0);
+    lcd.print("Calibracao        ");
+    lcd.setCursor(0, 1);
+    lcd.print("finalizada!       ");
+
+    delay(2000);
+    
+    lcd.setCursor(0, 0);
+    lcd.print("minSP:"); lcd.print(pots.minSP, 1); //lcd.print(" ");
+    lcd.print(" maxSP:"); lcd.print(pots.maxSP, 1); //lcd.print(" ");
+    lcd.setCursor(0, 1);
+    lcd.print("minP:"); lcd.print(pots.minKP, 1); //lcd.print(" ");
+    lcd.print(" maxP:"); lcd.print(pots.maxKP, 1); //lcd.print(" ");
+    delay(5000);
+    lcd.setCursor(0, 0);
+    lcd.print("minI:"); lcd.print(pots.minKI, 1); //lcd.print(" ");
+    lcd.print(" maxI:"); lcd.print(pots.maxKI, 1); //lcd.print(" ");
+    lcd.setCursor(0, 1);
+    lcd.print("minD:"); lcd.print(pots.minKD, 1); //lcd.print(" ");
+    lcd.print(" maxD:"); lcd.print(pots.maxKD, 1); //lcd.print(" ");
+
+    delay(5000);
+
     lcd.setCursor(0, 0);
     lcd.print("                     ");
     lcd.setCursor(0, 1);
     lcd.print("                     ");
-    //Serial.println("fim delay");
 
-    inicializarPotenciometros();
-    
 }
 
 // --- Loop Principal ---

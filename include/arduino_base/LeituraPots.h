@@ -9,15 +9,25 @@ const int PIN_KP = A0;
 const int PIN_KI = A3;       
 const int PIN_KD = A1;     
 
-void inicializarPotenciometros();
 
 class LeituraPots {
 public:
+
+    // Nova função de calibração que dura 5 segundos por padrão
+    void inicializarPotenciometros(unsigned long tempoCalibracaoMs = 20000);
+
     // Lê e mapeia o potenciômetro do Setpoint (0-1000 RPM)
     double getSetpointRPM(); 
     
     // Lê e mapeia os ganhos PID (retorna o valor atual, ou atualiza o ponteiro)
     void getGanhosPID(double &kp, double &ki, double &kd);
+
+    // Variáveis para armazenar a calibração de cada potenciômetro
+    // Min começa alto e Max começa baixo para serem sobrepostos na leitura
+    int minSP = 1023, maxSP = 0;
+    int minKP = 1023, maxKP = 0;
+    int minKI = 1023, maxKI = 0;
+    int minKD = 1023, maxKD = 0;
 
 private:
     // Mapeamentos específicos para ajuste fino (Ajuste estas faixas!)
@@ -28,6 +38,18 @@ private:
     double _kpAtual = 0.0;
     double _kiAtual = 0.0;
     double _kdAtual = 0.0;
+
+    // Variáveis para armazenar a calibração de cada potenciômetro
+    // Min começa alto e Max começa baixo para serem sobrepostos na leitura
+    /*
+    int minSP = 1023, maxSP = 0;
+    int minKP = 1023, maxKP = 0;
+    int minKI = 1023, maxKI = 0;
+    int minKD = 1023, maxKD = 0;
+    */
+
+    // Função auxiliar para mapear números com casas decimais (double) e travar os limites
+    double mapDouble(double x, double in_min, double in_max, double out_min, double out_max);
 };
 
 #endif
