@@ -1,6 +1,6 @@
 #include "LeituraPots.h"
 
-void LeituraPots::inicializarPotenciometros(unsigned long tempoCalibracaoMs) {
+void LeituraPots::inicializarPotenciometros() {
 //     Serial.println("Iniciando calibracao...");
 //     Serial.println("GIRE TODOS OS POTENCIOMETROS DE PONTA A PONTA!");
     

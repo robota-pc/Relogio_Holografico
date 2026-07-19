@@ -12,11 +12,13 @@ const int PIN_KD = A1;
 const int RPMmin = 100;    // RPM mínimo
 const int RPMmax = 1500; // RPM máximo
 
-class LeituraPots {
-public:
+unsigned long tempoCalibracaoMs = 20000; // Tempo de calibração em milissegundos (20 segundos)
 
-    // Nova função de calibração que dura 5 segundos por padrão
-    void inicializarPotenciometros(unsigned long tempoCalibracaoMs = 200);
+class LeituraPots {
+    public:
+
+    // Nova função de calibração
+    void inicializarPotenciometros();
 
     // Lê e mapeia o potenciômetro do Setpoint (0-1000 RPM)
     double getSetpointRPM(); 
