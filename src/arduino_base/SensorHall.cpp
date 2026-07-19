@@ -5,6 +5,8 @@ static volatile unsigned long contagemPulsos = 0;
 double velocidadeAtualRPM = 0;
 unsigned long tempoAnteriorMedicao = 0;
 bool imaDetectado = false;
+unsigned long INTERVALO_MEDICAO; // ms
+
 
 // Variáveis para o filtro PID
 double rpmFiltrado = 0.0;
@@ -47,5 +49,7 @@ if (deltaTempo >= INTERVALO_MEDICAO) {
         velocidadeAtualRPM = rpmFiltrado;
         
         tempoAnteriorMedicao = tempoAtual;
+
+        INTERVALO_MEDICAO = velocidadeAtualRPM < 300 ? 300 : (map(velocidadeAtualRPM, 300, 1500, 300, 100)); // Ajusta o intervalo de medição com base na velocidade
     }
 }

@@ -5,11 +5,11 @@
 
 // --- Variáveis Externas (compartilhadas com main.cpp) ---
 extern double velocidadeAtualRPM;
+extern unsigned long INTERVALO_MEDICAO; // ms
 
 // --- Constantes de Configuração ---
 const int PIN_HALL = A6; // Pino Digital 2 (Interrupção 0 no Uno)
 const unsigned int PULSOS_POR_REVOLUCAO = 1; // AJUSTE
-const unsigned long INTERVALO_MEDICAO = 300; // ms
 const double FATOR_SUAVIZACAO = 0.15; // Ajuste fino do filtro passa-baixa (0.0 a 1.0)
 
 
