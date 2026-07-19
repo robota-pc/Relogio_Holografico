@@ -4,10 +4,12 @@
 #include <Arduino.h>
 
 // --- Definições de Pinos ---
-const int PIN_SETPOINT = A0; 
-const int PIN_KP = A1;       
-const int PIN_KI = A2;       
-const int PIN_KD = A3;       
+const int PIN_SETPOINT = A2; 
+const int PIN_KP = A0;       
+const int PIN_KI = A3;       
+const int PIN_KD = A1;     
+
+void inicializarPotenciometros();
 
 class LeituraPots {
 public:
