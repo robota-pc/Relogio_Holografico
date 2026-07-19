@@ -9,7 +9,8 @@ int marcacao = 0;
 // --- Implementação da ISR ---
 void contarGiro() {
     int valorBruto = analogRead(PIN_HALL);
-    //Serial.print(marcacao); Serial.print(" / "); Serial.println(valorBruto);
+    //Serial.print(marcacao); Serial.print(" / "); 
+    //Serial.println(valorBruto);
     if(valorBruto > 800 && marcacao == 0){
         contagemPulsos++;
         marcacao ++;

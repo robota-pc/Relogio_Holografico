@@ -44,11 +44,11 @@ double LeituraPots::mapDouble(double x, double in_min, double in_max, double out
 
 double LeituraPots::getSetpointRPM() {
     int leitura = analogRead(PIN_SETPOINT);
-    Serial.print(" SP"); Serial.print(analogRead(PIN_SETPOINT)); Serial.print(" ");
+    //Serial.print(" SP"); Serial.print(analogRead(PIN_SETPOINT)); Serial.print(" ");
     
     // Setpoint de 0 a 1000 RPM
     leitura = constrain(leitura, minSP, maxSP);
-    Serial.print(" leitura"); Serial.print(leitura); Serial.print(" ");
+    //Serial.print(" leitura"); Serial.print(leitura); Serial.print(" ");
     return map(leitura, 0, 1023, 0, 1000); 
 }
 
@@ -59,9 +59,9 @@ void LeituraPots::getGanhosPID(double &kp, double &ki, double &kd) {
     int leituraKi = analogRead(PIN_KI);
     int leituraKd = analogRead(PIN_KD);
 
-    Serial.print(" P"); Serial.print(leituraKp); Serial.print(" ");
-    Serial.print(" I"); Serial.print(leituraKi); Serial.print(" ");
-    Serial.print(" D"); Serial.print(leituraKd); Serial.println(" ");
+    //Serial.print(" P"); Serial.print(leituraKp); Serial.print(" ");
+    //Serial.print(" I"); Serial.print(leituraKi); Serial.print(" ");
+    //Serial.print(" D"); Serial.print(leituraKd); Serial.println(" ");
 
     // Usamos o mapDouble passando os limites exatos da calibração de CADA porta analógica
     double novoKp = mapDouble(leituraKp, minKP, maxKP, 0.0, KP_MAX);
