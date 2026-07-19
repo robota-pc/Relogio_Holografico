@@ -1,8 +1,8 @@
 #include "LeituraPots.h"
 
 void LeituraPots::inicializarPotenciometros(unsigned long tempoCalibracaoMs) {
-    Serial.println("Iniciando calibracao...");
-    Serial.println("GIRE TODOS OS POTENCIOMETROS DE PONTA A PONTA!");
+//     Serial.println("Iniciando calibracao...");
+//     Serial.println("GIRE TODOS OS POTENCIOMETROS DE PONTA A PONTA!");
     
     unsigned long tempoInicio = millis();
     
@@ -25,12 +25,7 @@ void LeituraPots::inicializarPotenciometros(unsigned long tempoCalibracaoMs) {
         if(l_kd < minKD) minKD = l_kd;
         if(l_kd > maxKD) maxKD = l_kd;
     }
-    Serial.println("Calibracao finalizada!");
 
-    Serial.print("mSp"); Serial.print(minSP); Serial.print(" xSp"); Serial.println(maxSP);
-    Serial.print("mP"); Serial.print(minKP); Serial.print(" xP"); Serial.println(maxKP);
-    Serial.print("mI"); Serial.print(minKI); Serial.print(" xI"); Serial.println(maxKI);
-    Serial.print("mD"); Serial.print(minKD); Serial.print(" xD"); Serial.println(maxKD);
 }
 
 double LeituraPots::mapDouble(double x, double in_min, double in_max, double out_min, double out_max) {
@@ -44,12 +39,10 @@ double LeituraPots::mapDouble(double x, double in_min, double in_max, double out
 
 double LeituraPots::getSetpointRPM() {
     int leitura = analogRead(PIN_SETPOINT);
-    //Serial.print(" SP"); Serial.print(analogRead(PIN_SETPOINT)); Serial.print(" ");
     
     // Setpoint de 0 a 1000 RPM
     leitura = constrain(leitura, minSP, maxSP);
-    //Serial.print(" leitura"); Serial.print(leitura); Serial.print(" ");
-    return map(leitura, 0, 1023, 0, 1000); 
+    return map(leitura, 0, 1023, 100, 1500); // Ajuste para 0-1000 RPM
 }
 
 void LeituraPots::getGanhosPID(double &kp, double &ki, double &kd) {
@@ -58,10 +51,6 @@ void LeituraPots::getGanhosPID(double &kp, double &ki, double &kd) {
     int leituraKp = analogRead(PIN_KP);
     int leituraKi = analogRead(PIN_KI);
     int leituraKd = analogRead(PIN_KD);
-
-    //Serial.print(" P"); Serial.print(leituraKp); Serial.print(" ");
-    //Serial.print(" I"); Serial.print(leituraKi); Serial.print(" ");
-    //Serial.print(" D"); Serial.print(leituraKd); Serial.println(" ");
 
     // Usamos o mapDouble passando os limites exatos da calibração de CADA porta analógica
     double novoKp = mapDouble(leituraKp, minKP, maxKP, 0.0, KP_MAX);

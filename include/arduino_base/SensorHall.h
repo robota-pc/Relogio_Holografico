@@ -8,8 +8,8 @@ extern double velocidadeAtualRPM;
 
 // --- Constantes de Configuração ---
 const int PIN_HALL = A6; // Pino Digital 2 (Interrupção 0 no Uno)
-const unsigned int PULSOS_POR_REVOLUCAO = 2; // AJUSTE
-const unsigned long INTERVALO_MEDICAO = 100; // ms
+const unsigned int PULSOS_POR_REVOLUCAO = 1; // AJUSTE
+const unsigned long INTERVALO_MEDICAO = 250; // ms
 
 // --- Protótipos de Funções ---
 

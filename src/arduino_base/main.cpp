@@ -26,18 +26,16 @@ double Kp, Ki, Kd;
 PID meuPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
 unsigned long ultimoTempoLcd = 0;
-const unsigned long INTERVALO_LCD = 1000; // Atualiza o LCD a cada 200ms
+const unsigned long INTERVALO_LCD = 200; // Atualiza o LCD a cada 200ms
 
 // --- Setup ---
 
 void setup() {
     Serial.begin(9600);
-    //Serial.println("setup");
     
     // 1. Inicializa o Motor e o Sensor Hall
     motor.inicializar();
     inicializarSensorHall(); // Função do SensorHall.cpp
-    //Serial.println("setup1");
     // 2. Inicializa o LCD
     lcd.begin(16, 2);
     lcd.setRGB(0, 150, 255); 
@@ -52,25 +50,28 @@ void setup() {
     // Leitura inicial dos ganhos e Setpoint
     pots.getGanhosPID(Kp, Ki, Kd); // Le e define os ganhos iniciais
     Setpoint = pots.getSetpointRPM();
-    //Serial.println("setup3");
     
     meuPID.SetMode(AUTOMATIC);
-    meuPID.SetOutputLimits(0, 255); 
+    meuPID.SetOutputLimits(100, 255); 
     meuPID.SetTunings(Kp, Ki, Kd);
-    //Serial.println("setup4");
     
     delay(2000);
-    //Serial.println("fim delay");
-
     
     lcd.setCursor(0, 0);
     lcd.print("Calibracao");
     lcd.setCursor(0, 1);
     lcd.print("POTENCIOMETROS");
 
+    delay(2000);
+
+    lcd.setCursor(0, 0);
+    lcd.print("GIRE TODOS OS");
+    lcd.setCursor(0, 1);
+    lcd.print("POTENCIOMETROS!");
+
     pots.inicializarPotenciometros();
 
-    Serial.println("Calibracao finalizada!");
+//     Serial.println("Calibracao finalizada!");
     lcd.setCursor(0, 0);
     lcd.print("Calibracao        ");
     lcd.setCursor(0, 1);
@@ -79,18 +80,14 @@ void setup() {
     delay(2000);
     
     lcd.setCursor(0, 0);
-    lcd.print("minSP"); lcd.print(pots.minSP, 1); //lcd.print(" ");
-    lcd.print(" maxSP"); lcd.print(pots.maxSP, 1); //lcd.print(" ");
+    lcd.print("minSP"); lcd.print(pots.minSP, 1); lcd.print(" maxSP"); lcd.print(pots.maxSP, 1); lcd.print("   ");
     lcd.setCursor(0, 1);
-    lcd.print("minP"); lcd.print(pots.minKP, 1); //lcd.print(" ");
-    lcd.print(" maxP"); lcd.print(pots.maxKP, 1); //lcd.print(" ");
+    lcd.print("minP"); lcd.print(pots.minKP, 1); lcd.print(" maxP"); lcd.print(pots.maxKP, 1); lcd.print("   ");
     delay(5000);
     lcd.setCursor(0, 0);
-    lcd.print("minI"); lcd.print(pots.minKI, 1); //lcd.print(" ");
-    lcd.print(" maxI"); lcd.print(pots.maxKI, 1); //lcd.print(" ");
+    lcd.print("minI"); lcd.print(pots.minKI, 1); lcd.print(" maxI"); lcd.print(pots.maxKI, 1); lcd.print("   ");
     lcd.setCursor(0, 1);
-    lcd.print("minD"); lcd.print(pots.minKD, 1); //lcd.print(" ");
-    lcd.print(" maxD"); lcd.print(pots.maxKD, 1); //lcd.print(" ");
+    lcd.print("minD"); lcd.print(pots.minKD, 1); lcd.print(" maxD"); lcd.print(pots.maxKD, 1); lcd.print("   ");
 
     delay(5000);
 
@@ -104,71 +101,55 @@ void setup() {
 // --- Loop Principal ---
 
 void loop() {
-    delay(500);
-    //Serial.println("loop");
-
-
     // 0. Contagem continua do giro
     contarGiro();
-    //Serial.println("pos giro");
 
+
+    
+    // 1. Leitura de Entradas (Pots)
+    Setpoint = pots.getSetpointRPM();
+    
+    // Atualiza Kp, Ki, Kd se os potenciômetros mudaram.
+    // O ponteiro do PID deve ser atualizado se os ganhos mudarem.
+    double novoKp, novoKi, novoKd;
+    pots.getGanhosPID(novoKp, novoKi, novoKd);
+    
+    if (novoKp != Kp || novoKi != Ki || novoKd != Kd) {
+        Kp = novoKp;
+        Ki = novoKi;
+        Kd = novoKd;
+        meuPID.SetTunings(Kp, Ki, Kd);
+    }
+    
+    // 2. Medição do Estado Atual (RPM)
+    atualizarRPM(); // Calcula e armazena o RPM em velocidadeAtualRPM
+    Input = velocidadeAtualRPM; 
+    
+    // 3. Cálculo PID e Controle
+    meuPID.Compute(); 
+    
+    // 4. Aplica a saída PWM
+    motor.setVelocidade((int)Output);
+        
     // temporizador para atualização dos outros valores
     unsigned long tempoAtual = millis();
     if (tempoAtual - ultimoTempoLcd >= INTERVALO_LCD) {
-        //Serial.println("if 1");
-        
-        // 1. Leitura de Entradas (Pots)
-        Setpoint = pots.getSetpointRPM();
-        
-        // Atualiza Kp, Ki, Kd se os potenciômetros mudaram.
-        // O ponteiro do PID deve ser atualizado se os ganhos mudarem.
-        double novoKp, novoKi, novoKd;
-        pots.getGanhosPID(novoKp, novoKi, novoKd);
-        //Serial.println("if 2");
-        
-        if (novoKp != Kp || novoKi != Ki || novoKd != Kd) {
-            Kp = novoKp;
-            Ki = novoKi;
-            Kd = novoKd;
-            meuPID.SetTunings(Kp, Ki, Kd);
-        }
-        // Serial.println("if 3");
-        
-        // 2. Medição do Estado Atual (RPM)
-        atualizarRPM(); // Calcula e armazena o RPM em velocidadeAtualRPM
-        Input = velocidadeAtualRPM; 
-        //Serial.println("if 4");
-        
-        // 3. Cálculo PID e Controle
-        meuPID.Compute(); 
-        //Serial.println("if 5");
-        
-        // 4. Aplica a saída PWM
-        motor.setVelocidade((int)Output);
-        //Serial.println("if 6");
-        
         // 5. Exibição no LCD 
         
         ultimoTempoLcd = tempoAtual;
-        //Serial.println("if 7");
         
         
         lcd.setCursor(0, 0);
         lcd.print("SP"); 
         lcd.print(Setpoint, 0); 
-        
-        //lcd.setCursor(8, 0);
         lcd.print(" P"); lcd.print(Kp, 2); lcd.print("       ");
-        //Serial.println("if 9");
         
         lcd.setCursor(0, 1);
         lcd.print("RPM"); 
         lcd.print(Input, 0); 
-        lcd.print(" I"); lcd.print(Ki*100, 0); //lcd.print(" ");
-        lcd.print(" D"); lcd.print(Kd*100, 0); //lcd.print("  ");
-        //Serial.println("if 10");
+        lcd.print(" I"); lcd.print(Ki*100, 0); 
+        lcd.print(" D"); lcd.print(Kd*100, 0); 
         
     }
-    //Serial.println("fim");
     
 }
