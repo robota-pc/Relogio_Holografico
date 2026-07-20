@@ -1,10 +1,19 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// Modos de Operação
+#define MODE_NORMAL 0
+#define MODE_TEST_OTA 1
+#define MODE_TEST_SENSOR 2
+#define MODE_TEST_LED 3
+
+// Flag para definir qual parte testar
+#define RUN_MODE MODE_NORMAL
+
 #ifdef ESP32_ENV
-#include <Arduino.h>
-#include <WebServer.h>
-#include <Adafruit_NeoPixel.h>
+#include <string>
+#include "esp_http_server.h"
+#include "led_strip.h"
 #endif
 
 // Configurações de Wi-Fi
@@ -16,7 +25,7 @@ extern const char *password;
 // Configurações do servidor web
 #ifdef ESP32_ENV
 extern const int serverPort;
-extern WebServer server;
+extern httpd_handle_t server;
 #endif
 
 // Configurações do NeoPixel
@@ -24,7 +33,7 @@ extern WebServer server;
 extern bool modo;
 extern const int LED_PIN;
 extern const int LED_COUNT;
-extern Adafruit_NeoPixel strip;
+extern led_strip_handle_t strip;
 #endif
 
 // Configurações do sensor
@@ -53,13 +62,13 @@ extern int volta_restante;
 extern int sessoes;
 extern int detect;
 extern int N_giro;
-extern unsigned long currentMicros;
-extern unsigned long tempoSensor;
-extern unsigned long tempo;
-extern unsigned long historico[150];
-extern unsigned long t_giro[5];
-extern unsigned long t_arco;
-extern unsigned long M_giro_antes;
-extern unsigned long M_giro_atual;
+extern uint64_t currentMicros;
+extern uint64_t tempoSensor;
+extern uint64_t tempo;
+extern uint64_t historico[150];
+extern uint64_t t_giro[5];
+extern uint64_t t_arco;
+extern uint64_t M_giro_antes;
+extern uint64_t M_giro_atual;
 
 #endif // CONFIG_H

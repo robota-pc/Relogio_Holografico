@@ -1,9 +1,10 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
-#include <Arduino.h>
+#include <string>
+#include <stdint.h>
 
-unsigned long filtro(unsigned long y0, unsigned long y1);
-bool parseStringToIntMatrix(String inputString, int imagem[1080][4]);
+uint64_t filtro(uint64_t y0, uint64_t y1);
+bool parseStringToIntMatrix(std::string inputString, int imagem[1080][4]);
 
 #endif

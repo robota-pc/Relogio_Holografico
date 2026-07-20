@@ -1,52 +1,72 @@
 #include "web_server_handlers.h"
 #include "config.h"
 #include "utilities.h"
-#include <Arduino.h>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include "esp_log.h"
+#include "led_strip.h"
+#include "esp_ota_ops.h"
+#include "esp_system.h"
+
+static const char *TAG = "web_handlers";
+
+static void extract_param_val(const std::string& data, const std::string& param, std::string& val) {
+    size_t start = data.find(param + "=");
+    if (start != std::string::npos) {
+        start += param.length() + 1;
+        size_t end = data.find('&', start);
+        if (end == std::string::npos) end = data.length();
+        val = data.substr(start, end - start);
+    }
+}
 
 /**
  * @brief Retorna os valores de t_giro em JSON para o gráfico.
  */
-void handleTGiroData() {
-  String json = "[";
-  for (int i = 0; i < 150; i++) {  // Envia os últimos 50 valores
-    json += String(historico[i]);  // Supondo valores cíclicos
+static esp_err_t handleTGiroData(httpd_req_t *req) {
+  std::string json = "[";
+  for (int i = 0; i < 150; i++) {
+    json += std::to_string(historico[i]);
     if (i < 149) json += ",";
   }
   json += "]";
-  server.send(200, "application/json", json);
+  httpd_resp_set_type(req, "application/json");
+  return httpd_resp_send(req, json.c_str(), json.length());
 }
 
 /**
  * @brief Retorna as variáveis do sistema em JSON.
  */
-void handleSystemData() {
-  String json = "{";
-  json += "\"t_giro\":[" + String(historico[0]); // Exemplo com historico
+static esp_err_t handleSystemData(httpd_req_t *req) {
+  std::string json = "{";
+  json += "\"t_giro\":[" + std::to_string(historico[0]);
   for (int i = 1; i < 5; i++) {
-    json += "," + String(historico[i]);
+    json += "," + std::to_string(historico[i]);
   }
   json += "],";
-  json += "\"t_arco\":" + String(t_arco) + ",";
-  json += "\"anterior\":" + String(anterior) + ",";
-  json += "\"novo\":" + String(novo) + ",";
-  json += "\"qntimagens\":" + String(qntimagens) + ",";
-  json += "\"sessoes\":" + String(sessoes) + ",";
-  json += "\"numSetores\":" + String(numSetores) + ",";
-  json += "\"modo\":" + String(modo) + ",";
-  json += "\"detect\":" + String(detect);
+  json += "\"t_arco\":" + std::to_string(t_arco) + ",";
+  json += "\"anterior\":" + std::to_string(anterior) + ",";
+  json += "\"novo\":" + std::to_string(novo) + ",";
+  json += "\"qntimagens\":" + std::to_string(qntimagens) + ",";
+  json += "\"sessoes\":" + std::to_string(sessoes) + ",";
+  json += "\"numSetores\":" + std::to_string(numSetores) + ",";
+  json += "\"modo\":" + std::to_string(modo) + ",";
+  json += "\"detect\":" + std::to_string(detect);
   json += "}";
-  server.send(200, "application/json", json);
+  httpd_resp_set_type(req, "application/json");
+  return httpd_resp_send(req, json.c_str(), json.length());
 }
 
 
 /**
  * @brief Função para lidar com a rota raiz.
  */
-void handleRoot() {
-  String page = "<html><body>";
+static esp_err_t handleRoot(httpd_req_t *req) {
+  std::string page = "<html><body>";
   page += "<h1>Sistema - Controle e Monitoramento</h1>";
 
-  // Gráfico de t_giro
   page += "<h2>Gráfico dos Valores de t_giro</h2>";
   page += "<canvas id='tGiroChart' width='400' height='200'></canvas>";
   page += "<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
@@ -66,7 +86,6 @@ void handleRoot() {
   page += "  }";
   page += "});";
 
-  // Atualizar gráfico dinamicamente
   page += "async function fetchTGiroData() {";
   page += "  const response = await fetch('/t_giro_data');";
   page += "  const data = await response.json();";
@@ -77,71 +96,86 @@ void handleRoot() {
 
   page += "</script>";
 
-  // Tabela de variáveis
   page += "<h2>Variáveis do Sistema</h2>";
   page += "<table border='1'>";
   page += "<thead><tr><th>Variável</th><th>Valor</th></tr></thead>";
   page += "<tbody id='systemDataTable'></tbody>";
   page += "</table>";
 
-  // Atualizar tabela dinamicamente
   page += "<script>";
   page += "async function fetchSystemData() {";
   page += "  const response = await fetch('/system_data');";
   page += "  const data = await response.json();";
   page += "  const table = document.getElementById('systemDataTable');";
-  page += "  table.innerHTML = '';"; // Limpar a tabela
+  page += "  table.innerHTML = '';";
   page += "  for (const [key, value] of Object.entries(data)) {";
   page += "    const row = `<tr><td>${key}</td><td>${Array.isArray(value) ? value.join(', ') : value}</td></tr>`;";
   page += "    table.innerHTML += row;";
   page += "  }";
   page += "}";
-  page += "setInterval(fetchSystemData, 1000);"; // Atualizar a cada 1 segundo
+  page += "setInterval(fetchSystemData, 1000);";
   page += "</script>";
 
-  // Controle de LED
   page += "<h2>Controlar LED:</h2>";
   page += "<a href='/led/on'>Ligar LED</a><br>";
   page += "<a href='/led/off'>Desligar LED</a><br>";
 
-  // Enviar matriz para nova imagem
   page += "<h2>Enviar uma Matriz para uma Nova Imagem:</h2>";
   page += "<form method='post' action='/send'>";
   page += "<textarea name='inputMatrix' rows='5' cols='40'></textarea><br>";
   page += "<input type='submit' value='Enviar Matriz'>";
   page += "</form>";
 
-  // Enviar 5 valores numéricos
   page += "<h2>Enviar Valores das Variaveis:</h2>";
   page += "<form method='post' action='/send_values'>";
   for (int i = 0; i < 7; i++) {
-    page += "Valor " + String(i) + ": <input type='number' name='value" + String(i) + "'><br>";
+    page += "Valor " + std::to_string(i) + ": <input type='number' name='value" + std::to_string(i) + "'><br>";
   }
-  page += "Valor 0 = peso valor antigo; valor atual = " + String(anterior) + "'><br>";
-  page += " valor 1 = peso valor novo; valor atual = " + String(novo) + "'><br>";
-  page += "valor 2 = qntimagen; valor atual = " + String(qntimagens) + "'><br>";
-  page += "valor 3 = sessoes; valor atual = " + String(sessoes) + "'><br>";
-  page += "valor 4 = cima; valor atual = " + String(cima) + "'><br>";
-  page += "valor 5 = baixo; valor atual = " + String(baixo) + "'><br>";
-  page += "valor 6 = volta; valor atual = " + String(volta) + "'><br>";
+  page += "Valor 0 = peso valor antigo; valor atual = " + std::to_string(anterior) + "<br>";
+  page += "valor 1 = peso valor novo; valor atual = " + std::to_string(novo) + "<br>";
+  page += "valor 2 = qntimagen; valor atual = " + std::to_string(qntimagens) + "<br>";
+  page += "valor 3 = sessoes; valor atual = " + std::to_string(sessoes) + "<br>";
+  page += "valor 4 = cima; valor atual = " + std::to_string(cima) + "<br>";
+  page += "valor 5 = baixo; valor atual = " + std::to_string(baixo) + "<br>";
+  page += "valor 6 = volta; valor atual = " + std::to_string(volta) + "<br>";
   page += "<input type='submit' value='Enviar Valores'>";
   page += "</form>";
 
   page += "</body></html>";
 
-  server.send(200, "text/html", page);
+  httpd_resp_set_type(req, "text/html");
+  return httpd_resp_send(req, page.c_str(), page.length());
 }
 
 /**
  * @brief Lida com o envio de valores numéricos.
  */
-void handleSendValues() {
-  for (int i = 0; i < 5; i++) {
-    if (server.hasArg("value" + String(i))) {
-      float value = server.arg("value" + String(i)).toFloat() / 1000;
-      float value2 = server.arg("value" + String(i)).toInt();
-      Serial.println("Valor " + String(i) + ": " + String(value));
-      // Aqui você pode atribuir os valores a variáveis específicas
+static esp_err_t handleSendValues(httpd_req_t *req) {
+  char buf[200];
+  int ret = httpd_req_recv(req, buf, sizeof(buf) - 1);
+  if (ret <= 0) {
+      if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+          httpd_resp_send_408(req);
+      }
+      return ESP_FAIL;
+  }
+  buf[ret] = '\0';
+  std::string data(buf);
+
+  for (int i = 0; i < 7; i++) {
+    std::string val_str;
+    extract_param_val(data, "value" + std::to_string(i), val_str);
+    if (!val_str.empty()) {
+      int value2 = 0;
+      float value = 0.0;
+      char *endptr = nullptr;
+      long parsed = strtol(val_str.c_str(), &endptr, 10);
+      if (endptr != val_str.c_str()) {
+        value2 = (int)parsed;
+        value = (float)value2 / 1000.0f;
+      }
+
+      ESP_LOGI(TAG, "Valor %d: %f", i, value);
       if (i == 0 ) {
         if(value != 0.0) {
           anterior = value;
@@ -180,44 +214,160 @@ void handleSendValues() {
     }
   }
   
-  server.send(200, "text/plain", "Valores recebidos com sucesso.");
+  const char* resp = "Valores recebidos com sucesso.";
+  return httpd_resp_send(req, resp, strlen(resp));
 }
 
 /**
  * @brief Função para ligar o LED.
  */
-void handleLedOn() {
+static esp_err_t handleLedOn(httpd_req_t *req) {
     modo = 1;
-    server.send(200, "text/plain", "LED ligado");
+    const char* resp = "LED ligado";
+    return httpd_resp_send(req, resp, strlen(resp));
 }
 
 /**
  * @brief Função para desligar o LED.
  */
-void handleLedOff() {
+static esp_err_t handleLedOff(httpd_req_t *req) {
     modo = 0; 
-    strip.clear();
-    strip.show();
-    server.send(200, "text/plain", "LED desligado");
+    led_strip_clear(strip);
+    const char* resp = "LED desligado";
+    return httpd_resp_send(req, resp, strlen(resp));
 }
 
 /**
  * @brief Função para processar o envio de dados.
  */
-void handleSend() {
-    if (server.hasArg("inputMatrix")) {
-        String inputString = server.arg("inputMatrix");
-        int imagem[1080][4];  // Matriz para armazenar os valores da imagem
+static esp_err_t handleSend(httpd_req_t *req) {
+    char* buf = (char*)malloc(req->content_len + 1);
+    if (!buf) {
+        httpd_resp_send_500(req);
+        return ESP_FAIL;
+    }
+    
+    int ret = httpd_req_recv(req, buf, req->content_len);
+    if (ret <= 0) {
+        free(buf);
+        return ESP_FAIL;
+    }
+    buf[ret] = '\0';
+    std::string data(buf);
+    free(buf);
 
-        // Tratamento de erro ao converter a string em matriz
-        bool success = parseStringToIntMatrix(inputString, imagem);
+    std::string inputMatrix;
+    extract_param_val(data, "inputMatrix", inputMatrix);
+
+    if (!inputMatrix.empty()) {
+        int imagem[1080][4]; 
+
+        bool success = parseStringToIntMatrix(inputMatrix, imagem);
         if (success) {
-            Serial.println("Matriz imagem criada com sucesso.");
-            server.send(200, "text/plain", "Matriz imagem criada com sucesso.");
+            ESP_LOGI(TAG, "Matriz imagem criada com sucesso.");
+            const char* resp = "Matriz imagem criada com sucesso.";
+            return httpd_resp_send(req, resp, strlen(resp));
         } else {
-            server.send(400, "text/plain", "Erro ao processar a matriz de imagem.");
+            httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Erro ao processar a matriz de imagem.");
+            return ESP_FAIL;
         }
     } else {
-        server.send(400, "text/plain", "Requisição inválida: 'inputMatrix' não fornecida.");
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Requisição inválida: 'inputMatrix' não fornecida.");
+        return ESP_FAIL;
     }
+}
+
+/**
+ * @brief Handler OTA via WebServer (HTTP POST /update)
+ */
+static esp_err_t handleOTAUpdate(httpd_req_t *req) {
+    esp_err_t err;
+    esp_ota_handle_t update_handle = 0 ;
+    const esp_partition_t *update_partition = NULL;
+
+    ESP_LOGI(TAG, "Iniciando processo OTA...");
+
+    update_partition = esp_ota_get_next_update_partition(NULL);
+    if (update_partition == NULL) {
+        ESP_LOGE(TAG, "Erro: Nenhuma partição OTA encontrada!");
+        httpd_resp_send_500(req);
+        return ESP_FAIL;
+    }
+
+    err = esp_ota_begin(update_partition, OTA_WITH_SEQUENTIAL_WRITES, &update_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "esp_ota_begin falhou (%s)", esp_err_to_name(err));
+        httpd_resp_send_500(req);
+        return ESP_FAIL;
+    }
+
+    int received = 0;
+    int remaining = req->content_len;
+    char ota_write_data[1024];
+
+    while (remaining > 0) {
+        int to_read = (remaining > sizeof(ota_write_data)) ? sizeof(ota_write_data) : remaining;
+        int recv_len = httpd_req_recv(req, ota_write_data, to_read);
+
+        if (recv_len <= 0) {
+            if (recv_len == HTTPD_SOCK_ERR_TIMEOUT) continue;
+            ESP_LOGE(TAG, "Erro recebendo os dados do firmware!");
+            esp_ota_abort(update_handle);
+            httpd_resp_send_500(req);
+            return ESP_FAIL;
+        }
+
+        err = esp_ota_write(update_handle, (const void *)ota_write_data, recv_len);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "esp_ota_write falhou (%s)", esp_err_to_name(err));
+            esp_ota_abort(update_handle);
+            httpd_resp_send_500(req);
+            return ESP_FAIL;
+        }
+
+        received += recv_len;
+        remaining -= recv_len;
+    }
+
+    err = esp_ota_end(update_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "esp_ota_end falhou (%s)", esp_err_to_name(err));
+        httpd_resp_send_500(req);
+        return ESP_FAIL;
+    }
+
+    err = esp_ota_set_boot_partition(update_partition);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "esp_ota_set_boot_partition falhou (%s)", esp_err_to_name(err));
+        httpd_resp_send_500(req);
+        return ESP_FAIL;
+    }
+
+    const char* resp = "OTA executado com sucesso! Reiniciando a placa...";
+    httpd_resp_send(req, resp, strlen(resp));
+
+    ESP_LOGI(TAG, "OTA Realizado. Reiniciando...");
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    esp_restart();
+    return ESP_OK;
+}
+
+void register_web_server_handlers(httpd_handle_t server) {
+    httpd_uri_t root = { .uri = "/", .method = HTTP_GET, .handler = handleRoot, .user_ctx = NULL };
+    httpd_uri_t led_on = { .uri = "/led/on", .method = HTTP_GET, .handler = handleLedOn, .user_ctx = NULL };
+    httpd_uri_t led_off = { .uri = "/led/off", .method = HTTP_GET, .handler = handleLedOff, .user_ctx = NULL };
+    httpd_uri_t send_post = { .uri = "/send", .method = HTTP_POST, .handler = handleSend, .user_ctx = NULL };
+    httpd_uri_t t_giro_data = { .uri = "/t_giro_data", .method = HTTP_GET, .handler = handleTGiroData, .user_ctx = NULL };
+    httpd_uri_t system_data = { .uri = "/system_data", .method = HTTP_GET, .handler = handleSystemData, .user_ctx = NULL };
+    httpd_uri_t send_values = { .uri = "/send_values", .method = HTTP_POST, .handler = handleSendValues, .user_ctx = NULL };
+    httpd_uri_t ota_update = { .uri = "/update", .method = HTTP_POST, .handler = handleOTAUpdate, .user_ctx = NULL };
+
+    httpd_register_uri_handler(server, &root);
+    httpd_register_uri_handler(server, &led_on);
+    httpd_register_uri_handler(server, &led_off);
+    httpd_register_uri_handler(server, &send_post);
+    httpd_register_uri_handler(server, &t_giro_data);
+    httpd_register_uri_handler(server, &system_data);
+    httpd_register_uri_handler(server, &send_values);
+    httpd_register_uri_handler(server, &ota_update);
 }

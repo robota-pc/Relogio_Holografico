@@ -1,6 +1,10 @@
 #include "utilities.h"
-#include <Arduino.h>
 #include "config.h"
+#include <string>
+#include <iostream>
+#include "esp_log.h"
+
+static const char *TAG = "utilities";
 
 /**
  * @brief Função de filtro com coeficientes.
@@ -9,9 +13,9 @@
  * @param y1 Valor atual.
  * @return Resultado filtrado.
  */
-unsigned long filtro(unsigned long y0, unsigned long y1) {
+uint64_t filtro(uint64_t y0, uint64_t y1) {
   // Aplicação de filtro simples
-  unsigned long y2 = anterior * y0 + novo * y1;
+  uint64_t y2 = anterior * y0 + novo * y1;
   return y2;
 }
 
@@ -22,36 +26,41 @@ unsigned long filtro(unsigned long y0, unsigned long y1) {
  * @param imagem Matriz de inteiros de saída.
  * @return true se a conversão for bem-sucedida, false caso contrário.
  */
-bool parseStringToIntMatrix(String inputString, int imagem[1080][4]) {
+bool parseStringToIntMatrix(std::string inputString, int imagem[1080][4]) {
   // Verificação inicial da string
   if (inputString.length() < 2) {
-    Serial.println("String de entrada inválida.");
+    ESP_LOGE(TAG, "String de entrada inválida.");
     return false;
   }
 
   // Remover '{' e '}'
-  inputString.remove(0, 1);
-  inputString.remove(inputString.length() - 1, 1);
+  if (inputString.front() == '{') inputString.erase(0, 1);
+  if (inputString.back() == '}') inputString.pop_back();
 
   int rowIndex = 0;
   int colIndex = 0;
-  String token;
-  while (inputString.length() > 0 && rowIndex < 1080) {
-    int commaIndex = inputString.indexOf(',');
-    if (commaIndex != -1) {
-      token = inputString.substring(0, commaIndex);
-      inputString.remove(0, commaIndex + 1);
+  std::string token;
+  size_t pos = 0;
+  
+  while (!inputString.empty() && rowIndex < 1080) {
+    pos = inputString.find(',');
+    if (pos != std::string::npos) {
+      token = inputString.substr(0, pos);
+      inputString.erase(0, pos + 1);
     } else {
       token = inputString;
       inputString = "";
     }
 
-    // Converter o token para int com tratamento de erro
-    int value = token.toInt();
-    if (value == 0 && token != "0") {
-      Serial.println("Erro ao converter token para inteiro: " + token);
-      return false;
+    // Converter o token para int com tratamento de erro (sem exceções)
+    int value = 0;
+    char *endptr = nullptr;
+    long parsed = strtol(token.c_str(), &endptr, 10);
+    if (endptr == token.c_str() && token != "0") {
+        ESP_LOGE(TAG, "Erro ao converter token para inteiro: %s", token.c_str());
+        return false;
     }
+    value = (int)parsed;
  
     imagem[rowIndex][colIndex] = value;
     colIndex++;
@@ -62,7 +71,7 @@ bool parseStringToIntMatrix(String inputString, int imagem[1080][4]) {
   }
 
   if (rowIndex >= 1080) {
-    Serial.println("A matriz de imagem excedeu o tamanho máximo.");
+    ESP_LOGE(TAG, "A matriz de imagem excedeu o tamanho máximo.");
     return false;
   }
 

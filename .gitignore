@@ -1,5 +1,19 @@
-.pio
-.vscode/*
-build/*
+# Pastas de build e temporárias do PlatformIO e ESP-IDF
+.pio/
+build/
 
-bçlblkbj
+# Configurações locais do editor
+.vscode/
+
+# Componentes gerenciados e arquivos de configuração local gerados
+managed_components/
+sdkconfig
+sdkconfig.*
+!sdkconfig.defaults
+!sdkconfig.defaults.*
+!sdkconfig.rename
+
+# Arquivos temporários e de cache do Python (Preventivo)
+__pycache__/
+*.py[cod]
+*$py.class
