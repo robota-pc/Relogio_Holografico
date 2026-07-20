@@ -14,8 +14,8 @@ static int h = 0;
 void sensorInit() {
     adc1_config_width(ADC_WIDTH_BIT_10);
     // GPIO 34 é o canal 6 do ADC1
-    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_12);
-    ESP_LOGI(TAG, "Sensor ADC inicializado no canal 6 (GPIO 34)");
+    adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_12);
+    ESP_LOGI(TAG, "Sensor ADC inicializado no canal 7 (GPIO 35)");
 }
 
 /**
