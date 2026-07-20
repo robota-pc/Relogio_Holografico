@@ -59,89 +59,223 @@ static esp_err_t handleSystemData(httpd_req_t *req) {
   return httpd_resp_send(req, json.c_str(), json.length());
 }
 
-
 /**
  * @brief Função para lidar com a rota raiz.
  */
 static esp_err_t handleRoot(httpd_req_t *req) {
-  std::string page = "<html><body>";
-  page += "<h1>Sistema - Controle e Monitoramento</h1>";
+  std::string page = R"HTML(
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard do Rotor</title>
+  <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #e0e0e0;
+      --accent: #00e5ff; /* Cyan neon para combinar com projetos de LED */
+      --accent-hover: #00b3cc;
+      --danger: #cf6679;
+      --danger-hover: #b00020;
+      --border: #333;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { text-align: center; color: var(--accent); margin-bottom: 30px; letter-spacing: 1px; }
+    
+    /* Layout em Grid (Responsivo) */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Cartões */
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      color: #fff;
+    }
+    
+    /* Gráficos e Tabelas */
+    canvas { width: 100% !important; max-height: 250px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--accent); font-weight: 600; }
+    
+    /* Botões */
+    .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
+    .btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 6px;
+      text-decoration: none; font-weight: bold; font-size: 0.95rem;
+      background-color: var(--accent); color: #000; transition: 0.2s;
+      border: none; cursor: pointer; display: block; width: 100%; box-sizing: border-box;
+    }
+    .btn:hover { background-color: var(--accent-hover); box-shadow: 0 0 8px var(--accent); }
+    .btn-danger { background-color: var(--danger); color: #fff; }
+    .btn-danger:hover { background-color: var(--danger-hover); box-shadow: 0 0 8px var(--danger); }
+    
+    /* Formulários */
+    input[type='number'], textarea {
+      width: 100%; padding: 12px; margin: 8px 0 16px 0; border-radius: 6px;
+      border: 1px solid var(--border); background: #2c2c2c; color: var(--text);
+      box-sizing: border-box; font-family: monospace; font-size: 1rem;
+    }
+    input[type='number']:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    .form-label { font-size: 0.85rem; color: #bbb; display: block; font-weight: 500;}
+    .status-text { margin-top: 10px; font-size: 0.85rem; color: #999; line-height: 1.6; background: #181818; padding: 15px; border-radius: 6px;}
+    .status-text b { color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Painel de Controle e Monitoramento</h1>
+  <div class="dashboard">
+    
+    <!-- Bloco 1: Gráfico -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <h2>Gráfico de t_giro</h2>
+      <canvas id="tGiroChart"></canvas>
+    </div>
 
-  page += "<h2>Gráfico dos Valores de t_giro</h2>";
-  page += "<canvas id='tGiroChart' width='400' height='200'></canvas>";
-  page += "<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
-  page += "<script>";
-  page += "const ctx = document.getElementById('tGiroChart').getContext('2d');";
-  page += "const tGiroChart = new Chart(ctx, {";
-  page += "  type: 'line',";
-  page += "  data: {";
-  page += "    labels: Array.from({length: 150}, (_, i) => i + 1),";
-  page += "    datasets: [{";
-  page += "      label: 'Valores de t_giro',";
-  page += "      data: [],";
-  page += "      borderColor: 'rgba(75, 192, 192, 1)',";
-  page += "      backgroundColor: 'rgba(75, 192, 192, 0.2)',";
-  page += "      tension: 0.1";
-  page += "    }]";
-  page += "  }";
-  page += "});";
+    <!-- Bloco 2: Variáveis do Sistema -->
+    <div class="card">
+      <h2>Variáveis do Sistema</h2>
+      <table>
+        <thead><tr><th>Variável</th><th>Valor</th></tr></thead>
+        <tbody id="systemDataTable"></tbody>
+      </table>
+    </div>
 
-  page += "async function fetchTGiroData() {";
-  page += "  const response = await fetch('/t_giro_data');";
-  page += "  const data = await response.json();";
-  page += "  tGiroChart.data.datasets[0].data = data;";
-  page += "  tGiroChart.update();";
-  page += "}";
-  page += "setInterval(fetchTGiroData, 250);";
+    <!-- Bloco 3: Controles Diretos -->
+    <div class="card">
+      <h2>Controle do LED</h2>
+      <div class="btn-group">
+        <a href="/led/on" class="btn">Ligar LED</a>
+        <a href="/led/off" class="btn btn-danger">Desligar LED</a>
+      </div>
 
-  page += "</script>";
+      <h2>Enviar Nova Imagem</h2>
+      <form method="post" action="/send">
+        <label class="form-label">Matriz da Imagem</label>
+        <textarea name="inputMatrix" rows="6" placeholder="Insira os dados da matriz aqui..."></textarea>
+        <button type="submit" class="btn">Enviar Matriz</button>
+      </form>
+    </div>
 
-  page += "<h2>Variáveis do Sistema</h2>";
-  page += "<table border='1'>";
-  page += "<thead><tr><th>Variável</th><th>Valor</th></tr></thead>";
-  page += "<tbody id='systemDataTable'></tbody>";
-  page += "</table>";
+    <!-- Bloco 4: Configuração de Variáveis -->
+    <div class="card">
+      <h2>Atualizar Parâmetros</h2>
+      <form method="post" action="/send_values">
+)HTML";
 
-  page += "<script>";
-  page += "async function fetchSystemData() {";
-  page += "  const response = await fetch('/system_data');";
-  page += "  const data = await response.json();";
-  page += "  const table = document.getElementById('systemDataTable');";
-  page += "  table.innerHTML = '';";
-  page += "  for (const [key, value] of Object.entries(data)) {";
-  page += "    const row = `<tr><td>${key}</td><td>${Array.isArray(value) ? value.join(', ') : value}</td></tr>`;";
-  page += "    table.innerHTML += row;";
-  page += "  }";
-  page += "}";
-  page += "setInterval(fetchSystemData, 1000);";
-  page += "</script>";
-
-  page += "<h2>Controlar LED:</h2>";
-  page += "<a href='/led/on'>Ligar LED</a><br>";
-  page += "<a href='/led/off'>Desligar LED</a><br>";
-
-  page += "<h2>Enviar uma Matriz para uma Nova Imagem:</h2>";
-  page += "<form method='post' action='/send'>";
-  page += "<textarea name='inputMatrix' rows='5' cols='40'></textarea><br>";
-  page += "<input type='submit' value='Enviar Matriz'>";
-  page += "</form>";
-
-  page += "<h2>Enviar Valores das Variaveis:</h2>";
-  page += "<form method='post' action='/send_values'>";
+  // Injetando os formulários numericos no HTML de forma mais limpa
   for (int i = 0; i < 7; i++) {
-    page += "Valor " + std::to_string(i) + ": <input type='number' name='value" + std::to_string(i) + "'><br>";
+    page += "<label class='form-label'>Valor " + std::to_string(i) + "</label>";
+    page += "<input type='number' step='any' name='value" + std::to_string(i) + "'>";
   }
-  page += "Valor 0 = peso valor antigo; valor atual = " + std::to_string(anterior) + "<br>";
-  page += "valor 1 = peso valor novo; valor atual = " + std::to_string(novo) + "<br>";
-  page += "valor 2 = qntimagen; valor atual = " + std::to_string(qntimagens) + "<br>";
-  page += "valor 3 = sessoes; valor atual = " + std::to_string(sessoes) + "<br>";
-  page += "valor 4 = cima; valor atual = " + std::to_string(cima) + "<br>";
-  page += "valor 5 = baixo; valor atual = " + std::to_string(baixo) + "<br>";
-  page += "valor 6 = volta; valor atual = " + std::to_string(volta) + "<br>";
-  page += "<input type='submit' value='Enviar Valores'>";
-  page += "</form>";
 
-  page += "</body></html>";
+  page += R"HTML(
+        <div class="status-text">
+          <b>Valores Atuais:</b><br>
+)HTML";
+
+  // Injetando as variáveis atuais formatadas
+  page += "[0] Peso Antigo: <b>" + std::to_string(anterior) + "</b><br>";
+  page += "[1] Peso Novo: <b>" + std::to_string(novo) + "</b><br>";
+  page += "[2] Qtd Imagens: <b>" + std::to_string(qntimagens) + "</b><br>";
+  page += "[3] Sessões: <b>" + std::to_string(sessoes) + "</b><br>";
+  page += "[4] Cima: <b>" + std::to_string(cima) + "</b><br>";
+  page += "[5] Baixo: <b>" + std::to_string(baixo) + "</b><br>";
+  page += "[6] Volta: <b>" + std::to_string(volta) + "</b><br>";
+
+  page += R"HTML(
+        </div>
+        <button type="submit" class="btn" style="margin-top: 15px;">Salvar Valores</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Configuração do Gráfico (Tematizado para Escuro)
+    const ctx = document.getElementById('tGiroChart').getContext('2d');
+    const tGiroChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 150}, (_, i) => i + 1),
+        datasets: [{
+          label: 'Valores de t_giro',
+          data: [],
+          borderColor: '#00e5ff',
+          backgroundColor: 'rgba(0, 229, 255, 0.1)',
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#e0e0e0' } } },
+        scales: {
+          x: { ticks: { color: '#aaa' }, grid: { color: '#333' } },
+          y: { ticks: { color: '#aaa' }, grid: { color: '#333' } }
+        }
+      }
+    });
+
+    // Função assíncrona para buscar dados do gráfico
+    async function fetchTGiroData() {
+      try {
+        const response = await fetch('/t_giro_data');
+        if(response.ok) {
+            const data = await response.json();
+            tGiroChart.data.datasets[0].data = data;
+            tGiroChart.update();
+        }
+      } catch(e) { console.log("Aguardando ESP32..."); }
+    }
+    setInterval(fetchTGiroData, 250);
+
+    // Função assíncrona para buscar variáveis da tabela
+    async function fetchSystemData() {
+      try {
+        const response = await fetch('/system_data');
+        if(response.ok) {
+            const data = await response.json();
+            const table = document.getElementById('systemDataTable');
+            table.innerHTML = '';
+            for (const [key, value] of Object.entries(data)) {
+              const formattedVal = Array.isArray(value) ? value.join(', ') : value;
+              table.innerHTML += `<tr><td><b>${key}</b></td><td>${formattedVal}</td></tr>`;
+            }
+        }
+      } catch(e) {}
+    }
+    setInterval(fetchSystemData, 1000);
+  </script>
+</body>
+</html>
+)HTML";
 
   httpd_resp_set_type(req, "text/html");
   return httpd_resp_send(req, page.c_str(), page.length());
