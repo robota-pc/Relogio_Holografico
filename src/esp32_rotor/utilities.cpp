@@ -26,7 +26,7 @@ uint64_t filtro(uint64_t y0, uint64_t y1) {
  * @param imagem Matriz de inteiros de saída.
  * @return true se a conversão for bem-sucedida, false caso contrário.
  */
-bool parseStringToIntMatrix(std::string inputString, int imagem[1080][4]) {
+bool parseStringToIntMatrix(std::string inputString, int (*imagem)[4]) {
   // Verificação inicial da string
   if (inputString.length() < 2) {
     ESP_LOGE(TAG, "String de entrada inválida.");
@@ -64,7 +64,7 @@ bool parseStringToIntMatrix(std::string inputString, int imagem[1080][4]) {
  
     imagem[rowIndex][colIndex] = value;
     colIndex++;
-    if (colIndex >= 4) {
+    if (colIndex == 4) {
       colIndex = 0;
       rowIndex++;
     }

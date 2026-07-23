@@ -18,6 +18,9 @@ led_strip_handle_t strip = NULL;
 const int SENSOR_PIN = 36;
 int currentSensorValue = 0;
 
+// Controle de Brilho
+int brilho_led = 50;
+
 // Variáveis da imagem
 int largura = 20;
 int qntimagens = 2;

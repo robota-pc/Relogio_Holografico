@@ -42,6 +42,11 @@ extern const int SENSOR_PIN;
 extern int currentSensorValue;
 #endif
 
+// Controle de Brilho
+#ifdef ESP32_ENV
+extern int brilho_led;
+#endif
+
 // Variáveis da imagem
 #ifdef ESP32_ENV
 extern int largura;

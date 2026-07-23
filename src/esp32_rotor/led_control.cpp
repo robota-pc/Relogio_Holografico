@@ -34,13 +34,19 @@ void ledloop() {
                     led_strip_set_pixel(strip, y, 75, 0, 130);
                 } else if (y > baixo) {
                     estado = (y - baixo) + x * largura;
-                    red = imagem1[estado][0]; 
-                    green = imagem1[estado][1];
-                    blue = imagem1[estado][2];
+                    int r = imagem1[estado][0]; 
+                    int g = imagem1[estado][1];
+                    int b = imagem1[estado][2];
+                    int a = imagem1[estado][3]; // Original pixel brightness or alpha
+                    
+                    // Aplicar brilho global (brilho_led vai de 0 a 100) e o brilho do pixel (0 a 255)
+                    red = (r * brilho_led * a) / (100 * 255);
+                    green = (g * brilho_led * a) / (100 * 255);
+                    blue = (b * brilho_led * a) / (100 * 255);
                     
                     led_strip_set_pixel(strip, y, red, green, blue);
                 } else if (y <= baixo) {
-                    led_strip_set_pixel(strip, y, 255, 25, 0);
+                    led_strip_set_pixel(strip, y, (255 * brilho_led)/100, (25 * brilho_led)/100, 0);
                 }
             }
         }

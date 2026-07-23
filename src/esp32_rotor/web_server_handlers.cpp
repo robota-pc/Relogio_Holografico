@@ -55,7 +55,8 @@ static esp_err_t handleSystemData(httpd_req_t *req) {
   json += "\"modo\":" + std::to_string(modo) + ",";
   json += "\"detect\":" + std::to_string(detect) + ",";
   json += "\"sensorValue\":" + std::to_string(currentSensorValue) + ",";
-  json += "\"magnetDetected\":" + std::string((currentSensorValue > 550 || currentSensorValue < 320) ? "true" : "false");
+  json += "\"magnetDetected\":" + std::string((currentSensorValue > 550 || currentSensorValue < 320) ? "true" : "false") + ",";
+  json += "\"brilho_led\":" + std::to_string(brilho_led);
   json += "}";
   httpd_resp_set_type(req, "application/json");
   return httpd_resp_send(req, json.c_str(), json.length());
@@ -190,7 +191,7 @@ static esp_err_t handleRoot(httpd_req_t *req) {
 )HTML";
 
   // Injetando os formulários numericos no HTML de forma mais limpa
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 8; i++) {
     page += "<label class='form-label'>Valor " + std::to_string(i) + "</label>";
     page += "<input type='number' step='any' name='value" + std::to_string(i) + "'>";
   }
@@ -298,7 +299,7 @@ static esp_err_t handleSendValues(httpd_req_t *req) {
   buf[ret] = '\0';
   std::string data(buf);
 
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 8; i++) {
     std::string val_str;
     extract_param_val(data, "value" + std::to_string(i), val_str);
     if (!val_str.empty()) {
@@ -346,6 +347,9 @@ static esp_err_t handleSendValues(httpd_req_t *req) {
       }
       if (i == 6 ) {
         if (value2 != 0) volta = value2;
+      }
+      if (i == 7 ) {
+        if (value2 >= 0 && value2 <= 100) brilho_led = value2;
       }
     }
   }
