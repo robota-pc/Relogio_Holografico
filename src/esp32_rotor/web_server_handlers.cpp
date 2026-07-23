@@ -53,7 +53,9 @@ static esp_err_t handleSystemData(httpd_req_t *req) {
   json += "\"sessoes\":" + std::to_string(sessoes) + ",";
   json += "\"numSetores\":" + std::to_string(numSetores) + ",";
   json += "\"modo\":" + std::to_string(modo) + ",";
-  json += "\"detect\":" + std::to_string(detect);
+  json += "\"detect\":" + std::to_string(detect) + ",";
+  json += "\"sensorValue\":" + std::to_string(currentSensorValue) + ",";
+  json += "\"magnetDetected\":" + std::string((currentSensorValue > 550 || currentSensorValue < 320) ? "true" : "false");
   json += "}";
   httpd_resp_set_type(req, "application/json");
   return httpd_resp_send(req, json.c_str(), json.length());

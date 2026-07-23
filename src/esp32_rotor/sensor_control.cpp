@@ -22,10 +22,12 @@ void sensorInit() {
  * @brief Função principal de controle do sensor e cálculo de tempos.
  */
 void sensorLoop() {
-  int sensorValue = adc1_get_raw(ADC1_CHANNEL_6);
+  int sensorValue = adc1_get_raw(ADC1_CHANNEL_7);
+  currentSensorValue = sensorValue;
 
-  // O sensor hall 49E detecta acima de 800
-  if (sensorValue < 1000) {
+  // O sensor hall 49E em repouso lê aprox 400 a 450.
+  // Detecta a presença do ímã (qualquer pólo) se a leitura sair dessa zona.
+  if (sensorValue > 550 || sensorValue < 320) {
     detect += 1;
 
     if (detect == 1) {

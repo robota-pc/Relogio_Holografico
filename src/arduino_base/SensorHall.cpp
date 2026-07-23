@@ -16,11 +16,11 @@ void contarGiro() {
     
     // HISTERESE: Cria uma faixa de segurança para evitar contagem dupla
     // Ajuste esses valores (800 e 600) dependendo da força do seu ímã!
-    if (valorBruto > 800 && !imaDetectado) {
+    if (valorBruto > 600 && !imaDetectado) {
         imaDetectado = true; // O ímã chegou perto
         contagemPulsos++;    // Conta 1 giro
     } 
-    else if (valorBruto < 600 && imaDetectado) {
+    else if (valorBruto < 500 && imaDetectado) {
         imaDetectado = false; // O ímã se afastou o suficiente para rearmar
     }
 }

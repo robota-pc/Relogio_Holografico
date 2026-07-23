@@ -39,6 +39,7 @@ extern led_strip_handle_t strip;
 // Configurações do sensor
 #ifdef ESP32_ENV
 extern const int SENSOR_PIN;
+extern int currentSensorValue;
 #endif
 
 // Variáveis da imagem

@@ -15,7 +15,8 @@ const int LED_COUNT = 36;
 led_strip_handle_t strip = NULL;
 
 // Configurações do sensor
-const int SENSOR_PIN = 35;
+const int SENSOR_PIN = 36;
+int currentSensorValue = 0;
 
 // Variáveis da imagem
 int largura = 20;

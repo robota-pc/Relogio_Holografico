@@ -97,7 +97,7 @@ static httpd_handle_t start_webserver(void) {
 void sensor_task(void *pvParameters) {
     while (1) {
         sensorLoop();
-        vTaskDelay(pdMS_TO_TICKS(1)); 
+        vTaskDelay(1); 
     }
 }
 
@@ -106,7 +106,7 @@ void led_task(void *pvParameters) {
         if (modo == 1) {
             ledloop();
         }
-        vTaskDelay(pdMS_TO_TICKS(1)); 
+        vTaskDelay(1); 
     }
 }
 
