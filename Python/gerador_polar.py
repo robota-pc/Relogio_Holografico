@@ -66,7 +66,7 @@ def gerar_matriz_polar(img, num_setores=40, led_count=36):
 
 def main():
     # URL de exemplo (Substitua pela sua ou use caminho local)
-    url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2kYdEwVOHZ19GWO-S6m0W78ZN-8vNuwwx7Q&s"
+    url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-YnW3X4abWz2NJVOIUhCosBsfEgIaZoe1pc9yT2D5zzXSn6ulByQ6m8jy&s=10"
     
     print("Baixando imagem...")
     try:
