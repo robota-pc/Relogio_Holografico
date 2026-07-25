@@ -33,7 +33,7 @@ void ledloop() {
                 if (y > (LED_COUNT - cima - 1)) {
                     led_strip_set_pixel(strip, y, 75, 0, 130);
                 } else if (y > baixo) {
-                    estado = (y - baixo) + x * largura;
+                    estado = (y - baixo) + x * LED_COUNT;
                     int r = imagem1[estado][0]; 
                     int g = imagem1[estado][1];
                     int b = imagem1[estado][2];
