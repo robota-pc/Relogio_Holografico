@@ -13,11 +13,12 @@ int green = 0, red = 0, blue = 0;
 void ledloop() {
    currentMicros = esp_timer_get_time();
 
-    if (currentMicros >= (tempo + 500)) {
-        tempo += t_arco;
+    //if (currentMicros >= (tempo)) {
+        //tempo += t_arco*2;
+        //tempo += t_arco*2;
         for (int y = LED_COUNT - 1; y >= 0; y--) {
             if (sessoes > 0) {
-                if (x > sessoes) x = 1;
+                if (x > 4) x = 2;
                 if (x % 5 == 0) {
                     led_strip_set_pixel(strip, y, 255, 0, 0);
                 } else if (x % 5 == 1) {
@@ -33,7 +34,7 @@ void ledloop() {
                 if (y > (LED_COUNT - cima - 1)) {
                     led_strip_set_pixel(strip, y, 75, 0, 130);
                 } else if (y > baixo) {
-                    estado = (y - baixo) + x * LED_COUNT;
+                    estado = y + x * largura;
                     int r = imagem1[estado][0]; 
                     int g = imagem1[estado][1];
                     int b = imagem1[estado][2];
@@ -45,7 +46,8 @@ void ledloop() {
                     blue = (b * brilho_led * a) / (100 * 255);
                     
                     led_strip_set_pixel(strip, y, red, green, blue);
-                } else if (y <= baixo) {
+                } 
+                else if (y <= baixo) {
                     led_strip_set_pixel(strip, y, (255 * brilho_led)/100, (25 * brilho_led)/100, 0);
                 }
             }
@@ -53,8 +55,8 @@ void ledloop() {
         led_strip_refresh(strip);
         x -= 1;
         if (x < 0) {
-            tempo = currentMicros;
+            //tempo = currentMicros;
             x = largura - 1;
         }
-    }
+    //}
 }
